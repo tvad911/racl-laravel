@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\Backend\GroupCreateRequest;
@@ -62,7 +61,7 @@ class GroupsController extends Controller
     public function create()
     {
 
-        return view('backends.groups.create');
+        return view('groups.create');
     }
 
     /**

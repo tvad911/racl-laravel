@@ -317,8 +317,14 @@ class RolesController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+        $role = \App\Models\Acl\Role::find($id);
 
+        $permissions = $role->getPermissions()->get();
+        foreach ($permissions as $permission) {
+            \Acl::revokeRolePermission($permission, $role);
+        }
+
+        $deleted = $this->repository->delete($id);
         if (request()->wantsJson()) {
 
             return response()->json([
@@ -328,76 +334,5 @@ class RolesController extends Controller
         }
 
         return redirect()->back()->with('message', 'Role deleted.');
-    }
-
-    function test()
-    {
-        // $group = new \App\Models\Acl\Group();
-        // $group->name = 'MyGroup1';
-        // $group->save();
-
-        /**
-         * Create and save example Roles
-         */
-        // $role1 = new \App\Models\Acl\Role();
-        // $role1->name = 'My Role 1';
-        // $role1->save();
-
-        // $role2 = new \App\Models\Acl\Role();
-        // $role2->name = 'My Role 2';
-        // $role2->save();
-
-        // $role3 = new \App\Models\Acl\Role();
-        // $role3->name = 'My Role 3';
-        // $role3->filter = 'R';
-        // $role3->save();
-
-        /**
-         * Create and save example permissions
-         */
-        // $permission1 = \Acl::createPermission('zone1', 'access1', ['act1', 'act2', 'act3'], 'Zone 1');
-        // $permission2 = \Acl::createPermission('zone2', 'access2', ['act1', 'act2', 'act3'], 'Zone 2');
-        // $permission3 = \Acl::createPermission('zone3', 'access3', ['act1', 'act2', 'act3'], 'Zone 3');
-
-        /**
-         * When we have ready entity lets connect them
-         */
-        // $guestUser = \Auth::user();
-        // $guestUser->group_id = $group->id;
-        // $guestUser->save();
-
-
-        // // Connect user with permissions
-        // \Acl::grantUserPermission($permission1, $guestUser, ['act1']);
-        // \Acl::grantUserPermission($permission2, $guestUser, ['act1', 'act2', 'act3']);
-
-        // // Connect group with permissions
-        // \Acl::grantGroupPermission($permission1, $group, ['act3']);
-
-        // // Connect roles with permissions
-        // \Acl::grantRolePermission($permission3, $role1, ['act1']);
-        // \Acl::grantRolePermission($permission1, $role2, ['act2']);
-        // \Acl::grantRolePermission($permission2, $role3, ['act2']);
-
-        // // Connect user with roles
-        // \Acl::grantUserRole($role2, $guestUser);
-        // \Acl::grantUserRole($role3, $guestUser);
-
-        // // Connect group with roles
-        // \Acl::grantGroupRole($role1, $group);
-        // \Acl::grantGroupRole($role2, $group);
-
-        // dd($guestUser->getPermissions);
-
-        // $group = $guestUser->getGroup;
-        // dd($group->getPermissions);
-        // $resource_A = "zone2.access2|act2";
-        // dd(\Acl::isAllow($resource_A, $guestUser));
-        // $role1 = \App\Models\Acl\Role::find(1);
-        // $permission3 = \App\Models\Acl\Permission::find(3);
-
-        // \Acl::grantRolePermission($permission3, $role1, ['act2']);
-        // dd($role1);
-
     }
 }

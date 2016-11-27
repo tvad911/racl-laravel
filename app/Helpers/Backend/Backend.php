@@ -328,22 +328,56 @@ class Backend
 	 * @param  [type] $permission [description]
 	 * @return [type]             [description]
 	 */
-    function getActionsAttributeCheckbox($permission)
+    function getActionsAttributeCheckbox($permission, $old_permissions)
     {
-    	$actions = unserialize($permission->actions);
-        $string = '';
+    	if(isset($old_permissions) && $old_permissions != null)
+    	{
+    		$old_permissions_collect = collect(\Backend::getPermissionValue($old_permissions));
+	    	$actions = unserialize($permission->actions);
+	        $string = '';
 
-        foreach ($actions as $action) {
+	        if($old_permission = $old_permissions_collect->where('permission', $permission->area . '.'. $permission->permission)->first())
+	    	{
+	    		$actions1 = explode('.', $old_permission['action']);
+	    		foreach ($actions as $action) {
 
-        	$string .= sprintf('
-                    <div class="checkbox icheck">
-                        <label>
-                            <input type="checkbox" name="permission[]" value="%s|%s"> %s
-                        </label>
-                    </div>', $permission->area . '.' . $permission->permission, $action, $action);
-        }
+		        	$string .= sprintf('
+		                    <div class="checkbox icheck">
+		                        <label>
+		                            <input type="checkbox" name="permission[]" %s value="%s|%s"> %s
+		                        </label>
+		                    </div>', in_array($action, $actions1) ? 'checked="checked"' : '', $permission->area . '.' . $permission->permission, $action, $action);
+		        }
+	    	}
+	    	else
+	    	{
+	    		foreach ($actions as $action) {
+		        	$string .= sprintf('
+		                    <div class="checkbox icheck">
+		                        <label>
+		                            <input type="checkbox" name="permission[]" value="%s|%s"> %s
+		                        </label>
+		                    </div>', $permission->area . '.' . $permission->permission, $action, $action);
+		        }
+	    	}
+	    	return $string;
+    	}
+    	else{
+    		$actions = unserialize($permission->actions);
+	        $string = '';
 
-        return $string;
+	        foreach ($actions as $action) {
+
+	        	$string .= sprintf('
+	                    <div class="checkbox icheck">
+	                        <label>
+	                            <input type="checkbox" name="permission[]" value="%s|%s"> %s
+	                        </label>
+	                    </div>', $permission->area . '.' . $permission->permission, $action, $action);
+	        }
+
+	        return $string;
+    	}
     }
 
     /**

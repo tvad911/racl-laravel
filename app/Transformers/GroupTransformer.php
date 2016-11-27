@@ -7,7 +7,7 @@ use App\Models\Acl\Group;
 
 /**
  * Class GroupTransformer
- * @package namespace App\Transformers\Backend;
+ * @package namespace App\Transformers;
  */
 class GroupTransformer extends TransformerAbstract
 {

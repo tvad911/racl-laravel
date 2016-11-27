@@ -8,7 +8,7 @@ use Prettus\Repository\Presenter\FractalPresenter;
 /**
  * Class GroupPresenter
  *
- * @package namespace App\Presenters\Backend;
+ * @package namespace App\Presenters;
  */
 class GroupPresenter extends FractalPresenter
 {
