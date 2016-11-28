@@ -48,7 +48,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 {{ $permission->area . '.' . $permission->permission }}
-                                                {!! Backend::getActionsAttributeCheckboxEdit($permission, $edit_permissions) !!}
+                                                {!! Backend::getActionsAttributeCheckboxEdit($permission, $edit_permissions, old('permission')) !!}
                                             </div>
                                         </div>
                                     @endforeach

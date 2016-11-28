@@ -43,4 +43,13 @@ class GroupRepositoryEloquent extends BaseRepository implements GroupRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
+
+    /**
+    * [$fieldSearchable description]
+    * @var [type]
+    */
+    protected $fieldSearchable = [
+        'id',
+        'name' => 'like'
+    ];
 }

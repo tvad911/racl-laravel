@@ -43,4 +43,14 @@ class RoleRepositoryEloquent extends BaseRepository implements RoleRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
+
+    /**
+    * [$fieldSearchable description]
+    * @var [type]
+    */
+    protected $fieldSearchable = [
+        'id',
+        'name' => 'like',
+        'filter' => 'like'
+    ];
 }

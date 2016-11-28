@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\Backend\GroupCreateRequest;
 use App\Http\Requests\Backend\GroupUpdateRequest;
 use App\Repositories\GroupRepository;
+use App\Repositories\PermissionRepository;
 use App\Validators\Backend\GroupValidator;
 
 
@@ -26,10 +28,13 @@ class GroupsController extends Controller
      */
     protected $validator;
 
-    public function __construct(GroupRepository $repository, GroupValidator $validator)
+    public function __construct(GroupRepository $repository, GroupValidator $validator, PermissionRepository $permission)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->permission = $permission;
+        $this->para = \Backend::getIndexParams();
+        $this->middleware('auth');
     }
 
 
@@ -40,17 +45,20 @@ class GroupsController extends Controller
      */
     public function index()
     {
+        $options = $this->para;
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $groups = $this->repository->all();
+        $items = $this->repository->scopeQuery(function($query){
+                return $query->orderBy('id','desc');
+            })->paginate($options['items_per_page'], array('id', 'name', 'created_at', 'updated_at'));
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $groups,
+                'data' => $items,
             ]);
         }
 
-        return view('groups.index', compact('groups'));
+        return view('backends.groups.index', compact('items', 'options'));
     }
 
     /**
@@ -60,8 +68,10 @@ class GroupsController extends Controller
      */
     public function create()
     {
+        $this->permission->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        $permissions =  $this->permission->all();
 
-        return view('groups.create');
+        return view('backends.groups.create', compact('permissions'));
     }
 
     /**

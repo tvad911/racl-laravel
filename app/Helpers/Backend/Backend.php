@@ -472,47 +472,83 @@ class Backend
      * @param  [type] $edit_permissions [description]
      * @return [type]                   [description]
      */
-    function getActionsAttributeCheckboxEdit($permission, $edit_permissions)
+    function getActionsAttributeCheckboxEdit($permission, $edit_permissions, $old_permissions)
     {
-    	$actions = unserialize($permission->actions);
-
-    	$string = '';
-
     	/**
-    	 * Nếu trường hợp id của permission hiện tại không nằm trong edit permission
-    	 * thì tiến hành lấy
-    	 * nếu không thì tiến hành lấy action như của phương thức create
+    	 * Trường hợp: Không tồn tại permission của lần thay đổi
     	 */
-    	if($edit_permission = $edit_permissions->where('id', $permission->id)->first())
+        if(isset($old_permissions) && $old_permissions != null)
     	{
-    		/**
-    		 * Lấy ra list actions của permission trùng với id trong edit_permission
-    		 * @var [type]
-    		 */
-    		$actions1 = unserialize($edit_permission->pivot->actions);
+    		$old_permissions_collect = collect(\Backend::getPermissionValue($old_permissions));
+    		$actions = unserialize($permission->actions);
+	    	$string = '';
 
-    		foreach ($actions as $action) {
-	    		$string .= sprintf('
-	                    <div class="checkbox icheck">
-	                        <label>
-	                            <input type="checkbox" name="permission[]" value="%s|%s" %s> %s
-	                        </label>
-	                    </div>', $permission->area . '.' . $permission->permission, $action, in_array($action, $actions1) ? 'checked="checked"' : '' ,$action);
-	        }
-    	}
-    	else
-    	{
-    		foreach ($actions as $action) {
-	    		$string .= sprintf('
-	                    <div class="checkbox icheck">
-	                        <label>
-	                            <input type="checkbox" name="permission[]" value="%s|%s"> %s
-	                        </label>
-	                    </div>', $permission->area . '.' . $permission->permission, $action, $action);
+	        if($old_permission = $old_permissions_collect->where('permission', $permission->area . '.'. $permission->permission)->first())
+	    	{
+	    		$actions1 = explode('.', $old_permission['action']);
+	    		foreach ($actions as $action) {
+		    		$string .= sprintf('
+		                    <div class="checkbox icheck">
+		                        <label>
+		                            <input type="checkbox" name="permission[]" value="%s|%s" %s> %s
+		                        </label>
+		                    </div>', $permission->area . '.' . $permission->permission, $action, in_array($action, $actions1) ? 'checked="checked"' : '' ,$action);
+	        	}
 	    	}
+	    	else
+	    	{
+	    		foreach ($actions as $action) {
+		    		$string .= sprintf('
+		                    <div class="checkbox icheck">
+		                        <label>
+		                            <input type="checkbox" name="permission[]" value="%s|%s"> %s
+		                        </label>
+		                    </div>', $permission->area . '.' . $permission->permission, $action, $action);
+		    	}
+	    	}
+	    	return $string;
     	}
+    	else{
+    		$actions = unserialize($permission->actions);
 
-        return $string;
+	    	$string = '';
+
+	    	/**
+	    	 * Nếu trường hợp id của permission hiện tại không nằm trong edit permission
+	    	 * thì tiến hành lấy
+	    	 * nếu không thì tiến hành lấy action như của phương thức create
+	    	 */
+	    	if($edit_permission = $edit_permissions->where('id', $permission->id)->first())
+	    	{
+	    		/**
+	    		 * Lấy ra list actions của permission trùng với id trong edit_permission
+	    		 * @var [type]
+	    		 */
+	    		$actions1 = unserialize($edit_permission->pivot->actions);
+
+	    		foreach ($actions as $action) {
+		    		$string .= sprintf('
+		                    <div class="checkbox icheck">
+		                        <label>
+		                            <input type="checkbox" name="permission[]" value="%s|%s" %s> %s
+		                        </label>
+		                    </div>', $permission->area . '.' . $permission->permission, $action, in_array($action, $actions1) ? 'checked="checked"' : '' ,$action);
+		        }
+	    	}
+	    	else
+	    	{
+	    		foreach ($actions as $action) {
+		    		$string .= sprintf('
+		                    <div class="checkbox icheck">
+		                        <label>
+		                            <input type="checkbox" name="permission[]" value="%s|%s"> %s
+		                        </label>
+		                    </div>', $permission->area . '.' . $permission->permission, $action, $action);
+		    	}
+	    	}
+
+	        return $string;
+    	}
     }
 
     /**

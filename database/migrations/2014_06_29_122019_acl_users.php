@@ -55,6 +55,8 @@ class AclUsers extends Migration
                 'id'       => '1',
                 'login'    => 'guest',
                 'username' => 'guest',
+                'name'     => 'guest',
+                'email'    => 'guest@gmail.com',
                 'password' => 'NO PASSWORD',
                 'group_id' => '2'
             ));
