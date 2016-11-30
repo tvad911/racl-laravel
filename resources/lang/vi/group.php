@@ -13,5 +13,7 @@ return [
     |
     */
 
-    'name'        => 'Tên Group',
+    'name'       => 'Tên Group',
+    'role'       => 'Tên Role',
+    'permission' => 'Quyền hạn',
 ];

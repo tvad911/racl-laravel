@@ -12,6 +12,7 @@ use App\Http\Requests\Backend\GroupCreateRequest;
 use App\Http\Requests\Backend\GroupUpdateRequest;
 use App\Repositories\GroupRepository;
 use App\Repositories\PermissionRepository;
+use App\Repositories\RoleRepository;
 use App\Validators\Backend\GroupValidator;
 
 
@@ -28,11 +29,12 @@ class GroupsController extends Controller
      */
     protected $validator;
 
-    public function __construct(GroupRepository $repository, GroupValidator $validator, PermissionRepository $permission)
+    public function __construct(GroupRepository $repository, GroupValidator $validator, PermissionRepository $permission, RoleRepository $role)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
         $this->permission = $permission;
+        $this->role = $role;
         $this->para = \Backend::getIndexParams();
         $this->middleware('auth');
     }
@@ -70,8 +72,10 @@ class GroupsController extends Controller
     {
         $this->permission->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $permissions =  $this->permission->all();
+        $this->role->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        $roles =  $this->role->all();
 
-        return view('backends.groups.create', compact('permissions'));
+        return view('backends.groups.create', compact('permissions', 'roles'));
     }
 
     /**
@@ -83,34 +87,34 @@ class GroupsController extends Controller
      */
     public function store(GroupCreateRequest $request)
     {
+        // try {
 
-        try {
+        //     $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
+        //     $group = $this->repository->create($request->all());
 
-            $group = $this->repository->create($request->all());
+        //     $response = [
+        //         'message' => 'Group created.',
+        //         'data'    => $group->toArray(),
+        //     ];
 
-            $response = [
-                'message' => 'Group created.',
-                'data'    => $group->toArray(),
-            ];
+        //     if ($request->wantsJson()) {
 
-            if ($request->wantsJson()) {
+        //         return response()->json($response);
+        //     }
 
-                return response()->json($response);
-            }
+        //     return redirect()->back()->with('message', $response['message']);
+        // } catch (ValidatorException $e) {
+        //     if ($request->wantsJson()) {
+        //         return response()->json([
+        //             'error'   => true,
+        //             'message' => $e->getMessageBag()
+        //         ]);
+        //     }
 
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
+        //     return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+        // }
+        dd($request->all());
     }
 
 

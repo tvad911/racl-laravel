@@ -32,7 +32,26 @@
                     </div>
                     <!-- /.box-body -->
                     <div class="box-body">
-                        {!! Form::label('permission', trans('permission.permission')) !!}
+                        {!! Form::label('role', trans('group.role')) !!}
+                        @if(isset($roles) && $roles != null)
+                            <div class="col-md-12">
+                                <div class="row">
+                                    @foreach($roles as $role)
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {!! \Backend::getRoleAttributeCheckbox($role, old('role')) !!}
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div><!-- /.row -->
+                            </div>
+                        @else
+                            Chưa có role nào trong hệ thống. Vui lòng khởi tạo role trước.
+                        @endif
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-body">
+                        {!! Form::label('permission', trans('group.permission')) !!}
                         @if(isset($permissions) && $permissions != null)
                             <div class="col-md-12">
                                 <div class="row">

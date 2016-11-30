@@ -24,7 +24,7 @@ class GroupCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'   => 'required|min:3|max:255|unique:acl_groups,name',
         ];
     }
 }
