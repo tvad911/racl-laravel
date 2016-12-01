@@ -87,34 +87,82 @@ class GroupsController extends Controller
      */
     public function store(GroupCreateRequest $request)
     {
-        // try {
+        \DB::beginTransaction();
+        try {
 
-        //     $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
+            $this->validator->with($request->only('name'))->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-        //     $group = $this->repository->create($request->all());
+            $group = $this->repository->create($request->only('name'));
 
-        //     $response = [
-        //         'message' => 'Group created.',
-        //         'data'    => $group->toArray(),
-        //     ];
+            /**
+             * Check role exist
+             * If role is exist then do the job inside, if not then return with message
+             */
+            if($group)
+            {
+                $roles_arr = $request->role;
 
-        //     if ($request->wantsJson()) {
+                if($roles_arr)
+                {
+                    foreach ($roles_arr as $value) {
+                        $role = \App\Models\Acl\Role::where('id', $value)->first();
+                        if($role)
+                        {
+                            \Acl::grantGroupRole($role, $group);
+                        }
+                    }
+                }
+                /**
+                 * Get array of permission of role
+                 * @var [type]
+                 */
+                $permissions = \Backend::getPermissionValue($request->permission);
+                if($permissions)
+                {
+                    foreach($permissions as $value)
+                    {
+                        $permission_arr = explode('.', $value['permission']);
+                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        if($permission)
+                        {
+                            \Acl::grantGroupPermission($permission, $group, explode('.', $value['action']));
+                        }
+                    }
+                    \Flash::success(trans('messages.add_success', ['name' => trans('backend.group')]));
+                }
+            }
+            else
+            {
+                \Flash::warning(trans('messages.add_warning', ['name' => trans('backend.group')]));
 
-        //         return response()->json($response);
-        //     }
+                return redirect()->back()->with('message', $response['message']);
+            }
 
-        //     return redirect()->back()->with('message', $response['message']);
-        // } catch (ValidatorException $e) {
-        //     if ($request->wantsJson()) {
-        //         return response()->json([
-        //             'error'   => true,
-        //             'message' => $e->getMessageBag()
-        //         ]);
-        //     }
+            $response = [
+                'message' => 'Group created.',
+                'data'    => $role->toArray(),
+            ];
 
-        //     return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        // }
-        dd($request->all());
+            if ($request->wantsJson()) {
+
+                return response()->json($response);
+            }
+
+            \DB::commit();
+            return redirect()->route('admin.group.index');
+        } catch (ValidatorException $e) {
+            \DB::rollBack();
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'error'   => true,
+                    'message' => $e->getMessageBag()
+                ]);
+            }
+
+            \Flash::error(trans('messages.add_error', ['name' => trans('backend.group')]));
+
+            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+        }
     }
 
 
@@ -127,16 +175,19 @@ class GroupsController extends Controller
      */
     public function show($id)
     {
-        $group = $this->repository->find($id);
-
+        $item = $this->repository->find($id);
+        $this->role->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        $roles = $this->role->all();
+        $edit_roles = $item->getRoles()->get();
+        dd($edit_roles);
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $group,
+                'data' => $item,
             ]);
         }
 
-        return view('groups.show', compact('group'));
+        return view('backends.groups.show', compact('item', 'roles'));
     }
 
 

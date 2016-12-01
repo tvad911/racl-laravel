@@ -632,10 +632,48 @@ class Backend
     	return $edit_permissions;
     }
 
-    function getRoleAttributeCheckbox($role, $old_roles)
+    /**
+     * [getRoleAttributeCheckbox description]
+     * @param  [type] $role      [description]
+     * @param  [type] $old_roles [description]
+     * @return [type]            [description]
+     */
+    public function getRoleAttributeCheckbox($role, $old_roles)
     {
-    	// dd($old_roles);
     	if(isset($old_roles) && $old_roles != null)
+    	{
+    		$string = sprintf('
+                        <div class="checkbox icheck">
+                            <label>
+                                <input type="checkbox" name="role[]" value="%s" %s> %s
+                            </label>
+                        </div>', $role->id, in_array($role->id, $old_roles) ? 'checked="checked"' : '', $role->name);
+
+        	return $string;
+    	}
+    	else
+    	{
+    		$string = sprintf('
+                        <div class="checkbox icheck">
+                            <label>
+                                <input type="checkbox" name="role[]" value="%s"> %s
+                            </label>
+                        </div>', $role->id, $role->name);
+
+        	return $string;
+    	}
+
+    }
+
+    /**
+     * [getRoleAttributeCheckboxShow description]
+     * @param  [type] $role       [description]
+     * @param  [type] $edit_roles [description]
+     * @return [type]             [description]
+     */
+    public function getRoleAttributeCheckboxShow($role, $edit_roles)
+    {
+    	if(isset($edit_roles) && $edit_roles != null)
     	{
     		$string = sprintf('
                         <div class="checkbox icheck">
