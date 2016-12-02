@@ -20,6 +20,7 @@ Route::get('/home', 'HomeController@index');
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('user/updatemulti', ['as' => 'user.updatemulti', 'uses' => 'Backend\UsersController@postUpdateMulti']);
     Route::get('user/export/{type}', ['as' => 'user.export', 'uses' => 'Backend\UsersController@export'])->where('type', '[A-Za-z]+');
+    Route::get('user/permission/{id}', ['as' => 'user.permission', 'uses' => 'Backend\UsersController@permission'])->where('id', '[0-9]+');
     Route::resource('user','Backend\UsersController');
     Route::post('permission/updatemulti', ['as' => 'permission.updatemulti', 'uses' => 'Backend\PermissionsController@postUpdateMulti']);
     Route::get('permission/export/{type}', ['as' => 'permission.export', 'uses' => 'Backend\PermissionsController@export'])->where('type', '[A-Za-z]+');

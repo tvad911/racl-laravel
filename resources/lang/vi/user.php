@@ -13,11 +13,13 @@ return [
     |
     */
 
-    'email'          => 'Địa chỉ email',
-    'username'       => 'Tên tài khoản',
-    'password'       => 'Mật khẩu',
-    'old_password'   => 'Mật khẩu cũ',
-    'repassword'     => 'Nhập lại mật khẩu',
-    'fullname'       => 'Họ tên',
-    'type'           => 'Loại thành viên',
+    'email'        => 'Địa chỉ email',
+    'username'     => 'Tên tài khoản',
+    'password'     => 'Mật khẩu',
+    'old_password' => 'Mật khẩu cũ',
+    'repassword'   => 'Nhập lại mật khẩu',
+    'fullname'     => 'Họ tên',
+    'type'         => 'Loại thành viên',
+    'group'        => 'Nhóm thành viên',
+    'role'         => 'Nhóm quyền hạn',
 ];

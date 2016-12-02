@@ -10,6 +10,9 @@ use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\Backend\UserCreateRequest;
 use App\Http\Requests\Backend\UserUpdateRequest;
 use App\Repositories\UserRepository;
+use App\Repositories\GroupRepository;
+use App\Repositories\PermissionRepository;
+use App\Repositories\RoleRepository;
 use App\Validators\Backend\UserValidator;
 
 class UsersController extends Controller
@@ -26,10 +29,13 @@ class UsersController extends Controller
     protected $validator;
 
 
-    public function __construct(UserRepository $repository, UserValidator $validator)
+    public function __construct(UserRepository $repository, UserValidator $validator, GroupRepository $group, PermissionRepository $permission, RoleRepository $role)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->permission = $permission;
+        $this->role = $role;
+        $this->group = $group;
         $this->para = \Backend::getIndexParams();
         $this->middleware('auth');
     }
@@ -77,8 +83,9 @@ class UsersController extends Controller
      */
     public function create()
     {
+        $groups = $this->group->all();
 
-        return view('backends.users.create');
+        return view('backends.users.create', compact('groups'));
     }
 
 
@@ -91,7 +98,7 @@ class UsersController extends Controller
      */
     public function store(UserCreateRequest $request)
     {
-        $input = $request->only('email', 'username', 'name', 'status');
+        $input = $request->only('email', 'username', 'name', 'group_id', 'status');
         $input['password'] = bcrypt($request->password);
         if($this->repository->create($input))
         {
@@ -116,6 +123,7 @@ class UsersController extends Controller
     public function show($id)
     {
         $item = $this->repository->find($id);
+        $groups = $this->group->all();
 
         if (request()->wantsJson()) {
 
@@ -124,7 +132,7 @@ class UsersController extends Controller
             ]);
         }
 
-        return view('backends.users.show', compact('item'));
+        return view('backends.users.show', compact('item', 'groups'));
     }
 
 
@@ -138,8 +146,9 @@ class UsersController extends Controller
     public function edit($id)
     {
         $item = $this->repository->find($id);
+        $groups = $this->group->all();
 
-        return view('backends.users.edit', compact('item'));
+        return view('backends.users.edit', compact('item', 'groups'));
     }
 
 
@@ -279,5 +288,41 @@ class UsersController extends Controller
             });
 
         })->export($type);
+    }
+
+    /**
+     * [permission description]
+     * @return [type] [description]
+     */
+    public function permission($id)
+    {
+        $item = $this->repository->find($id);
+
+        $this->role->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        $roles = $this->role->all();
+        $edit_roles = $item->getRoles()->get();
+
+        $permissions = $this->permission->all();
+        $edit_permissions = $item->getPermissions;
+
+        if (request()->wantsJson()) {
+
+            return response()->json([
+                'data' => $item,
+            ]);
+        }
+
+        return view('backends.users.permission', compact('item', 'roles', 'edit_roles', 'permissions', 'edit_permissions'));
+    }
+
+    /**
+     * [updatePermission description]
+     * @param  UserUpdatePermisionRequest $request [description]
+     * @param  [type]                     $id      [description]
+     * @return [type]                              [description]
+     */
+    public function updatePermission(UserUpdatePermisionRequest $request, $id)
+    {
+
     }
 }

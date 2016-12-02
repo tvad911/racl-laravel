@@ -278,6 +278,21 @@ class Backend
 	    	return null;
 
 	}
+
+	function showButtonUser($options, $url, $id, $url_permission)
+	{
+		if($options['in_trash'] != 'yes')
+	        return sprintf('
+	        	<a href="%s" class="btn btn-default"><span class="fa fa-edit"></span> Edit</a>
+		        <button class="btn btn-default confirm-delete" type="button" data-id="%s">
+		            <span class="fa fa-trash"></span>
+		            Delete
+		        </button>
+		        <a href="%s" class="btn btn-default"><span class="fa fa-object-group"></span> Edit Permission</a>', $url, $id, $url_permission);
+	    else
+	    	return null;
+
+	}
 	/**
 	 * [showLink description]
 	 * @param  [type] $options [description]

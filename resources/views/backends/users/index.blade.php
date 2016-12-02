@@ -113,7 +113,7 @@
                                         <td>{{ $item->created_by }}</td>
                                         <td>{!! Backend::show_status($item->status) !!}</td>
                                         <td>
-                                            {!! Backend::showButton($options, route('admin.user.edit', $item->id), $item->id) !!}
+                                            {!! Backend::showButtonUser($options, route('admin.user.edit', $item->id), $item->id, route('admin.user.permission', $item->id)) !!}
                                         </td>
                                     </tr>
                                 @endforeach
