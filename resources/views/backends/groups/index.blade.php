@@ -187,7 +187,7 @@
                 e.preventDefault();
                 var id = $(this).data('id');
                 $('#myModal').data('id', id).modal('show');
-                $('#myModal').find('form').attr('action',{{ config('app.url') }}+'/admin/group/'+ id);
+                $('#myModal').find('form').attr('action','{{ config('app.url') }}'+'/admin/group/'+ id);
             });
 
             $('.action_confirm').click(function() {

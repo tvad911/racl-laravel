@@ -304,7 +304,6 @@ class RolesController extends Controller
 
             return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
-
     }
 
 
@@ -325,6 +324,12 @@ class RolesController extends Controller
         }
 
         $deleted = $this->repository->delete($id);
+
+        if($deleted)
+            \Flash::success(trans('messages.destroy_success', ['name' => trans('backend.role')]));
+        else
+            \Flash::warning(trans('messages.destroy_warning', ['name' => trans('backend.role')]));
+
         if (request()->wantsJson()) {
 
             return response()->json([

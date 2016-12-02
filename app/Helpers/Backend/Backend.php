@@ -678,9 +678,9 @@ class Backend
     		$string = sprintf('
                         <div class="checkbox icheck">
                             <label>
-                                <input type="checkbox" name="role[]" value="%s" %s> %s
+                                <input type="checkbox" name="role[]" value="%s" %s disabled="disabled"> %s
                             </label>
-                        </div>', $role->id, in_array($role->id, $old_roles) ? 'checked="checked"' : '', $role->name);
+                        </div>', $role->id, $edit_roles->where('name', $role->name)->first() ? 'checked="checked"' : '', $role->name);
 
         	return $string;
     	}
@@ -689,12 +689,60 @@ class Backend
     		$string = sprintf('
                         <div class="checkbox icheck">
                             <label>
-                                <input type="checkbox" name="role[]" value="%s"> %s
+                                <input type="checkbox" name="role[]" value="%s" disabled="disabled"> %s
                             </label>
                         </div>', $role->id, $role->name);
 
         	return $string;
     	}
+    }
 
+
+    /**
+     * [getRoleAttributeCheckboxShow description]
+     * @param  [type] $role       [description]
+     * @param  [type] $edit_roles [description]
+     * @return [type]             [description]
+     */
+    public function getRoleAttributeCheckboxEdit($role, $edit_roles, $old_roles)
+    {
+    	/**
+    	 * Trường hợp: Không tồn tại role của lần thay đổi
+    	 */
+        if(isset($old_roles) && $old_roles != null)
+    	{
+    		$string = sprintf('
+                        <div class="checkbox icheck">
+                            <label>
+                                <input type="checkbox" name="role[]" value="%s" %s> %s
+                            </label>
+                        </div>', $role->id, in_array($role->id, $old_roles) ? 'checked="checked"' : '', $role->name);
+
+        	return $string;
+    	}
+    	else{
+    		if(isset($edit_roles) && $edit_roles != null)
+	    	{
+	    		$string = sprintf('
+	                        <div class="checkbox icheck">
+	                            <label>
+	                                <input type="checkbox" name="role[]" value="%s" %s> %s
+	                            </label>
+	                        </div>', $role->id, $edit_roles->where('name', $role->name)->first() ? 'checked="checked"' : '', $role->name);
+
+	        	return $string;
+	    	}
+	    	else
+	    	{
+	    		$string = sprintf('
+	                        <div class="checkbox icheck">
+	                            <label>
+	                                <input type="checkbox" name="role[]" value="%s"> %s
+	                            </label>
+	                        </div>', $role->id, $role->name);
+
+	        	return $string;
+	    	}
+    	}
     }
 }

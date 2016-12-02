@@ -179,7 +179,10 @@ class GroupsController extends Controller
         $this->role->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $roles = $this->role->all();
         $edit_roles = $item->getRoles()->get();
-        dd($edit_roles);
+
+        $permissions = $this->permission->all();
+        $edit_permissions = $item->getPermissions;
+
         if (request()->wantsJson()) {
 
             return response()->json([
@@ -187,7 +190,7 @@ class GroupsController extends Controller
             ]);
         }
 
-        return view('backends.groups.show', compact('item', 'roles'));
+        return view('backends.groups.show', compact('item', 'roles', 'edit_roles', 'permissions', 'edit_permissions'));
     }
 
 
@@ -200,10 +203,15 @@ class GroupsController extends Controller
      */
     public function edit($id)
     {
+        $item = $this->repository->find($id);
+        $this->role->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        $roles = $this->role->all();
+        $edit_roles = $item->getRoles()->get();
 
-        $group = $this->repository->find($id);
+        $permissions = $this->permission->all();
+        $edit_permissions = $item->getPermissions;
 
-        return view('groups.edit', compact('group'));
+        return view('backends.groups.edit', compact('item', 'roles', 'edit_roles', 'permissions', 'edit_permissions'));
     }
 
 
@@ -217,15 +225,111 @@ class GroupsController extends Controller
      */
     public function update(GroupUpdateRequest $request, $id)
     {
-
+        \DB::beginTransaction();
         try {
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
+            $this->validator->with($request->only('name'))->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            $group = $this->repository->update($id, $request->all());
+            $group = $this->repository->update($request->only('name'), $id);
+
+
+            /**
+             * Check role exist
+             * If role is exist then do the job inside, if not then return with message
+             */
+            if($group)
+            {
+                /**
+                 * [$edit_roles_temp description]
+                 * Danh sách role của group
+                 * @var [type]
+                 */
+                $edit_roles_temp = $group->getRoles()->get();
+
+                /**
+                 * [$all_roles_temp description]
+                 * Tất cả các role được chỉnh sửa trong quản trị
+                 * @var [type]
+                 */
+                $new_roles_temp = $request->role;
+                /**
+                 * [$all_roles_temp description]
+                 * Tất cả các role hiện tại đang có.
+                 * @var [type]
+                 */
+
+                foreach ($edit_roles_temp as $edit_role) {
+                    if(!in_array($edit_role->id, $new_roles_temp))
+                    {
+                        \Acl::revokeGroupRole($edit_role, $group);
+                    }
+                }
+
+                foreach($new_roles_temp as $new_role)
+                {
+                    if(!$edit_roles_temp->where('id', $new_role)->first())
+                    {
+                        $role = \App\Models\Acl\Role::where('id', $new_role)->first();
+                        \Acl::grantGroupRole($role, $group);
+                    }
+                }
+                /**
+                 * Get array of permission of role
+                 * @var [type]
+                 */
+                $new_permissions_temp = \Backend::getPermissionValue($request->permission);
+                $edit_permissions_temp = \Backend::getPermissionValueFromArray($group->getPermissions());
+                $all_permissions_temp = \Backend::getPermissionValueFromCollection($this->permission->all());
+
+                $new_permissions = \Backend::getNewPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);
+                $edit_permissions = \Backend::getEditPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);
+
+                /*
+                 * $new_permission là tiến hành thêm mới permission vào group.
+                 * $edit_permission là tiến hành xóa permission hay cập nhật actions cho group là rỗng.
+                 * $edit_permissions_temp là tiến hành cập nhật lại actions cho các group này.
+                 */
+
+                if($edit_permissions)
+                {
+                    foreach($edit_permissions as $value)
+                    {
+                        $permission_arr = explode('.', $value['permission']);
+                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        if($permission)
+                        {
+                            \Acl::grantGroupPermission($permission, $group, array(), true);
+                        }
+                    }
+                }
+
+                if($new_permissions_temp)
+                {
+                    foreach($new_permissions_temp as $value)
+                    {
+                        $permission_arr = explode('.', $value['permission']);
+                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        if($permission)
+                        {
+                            if(isset($value['action']) && $value['action'] != null)
+                                \Acl::grantGroupPermission($permission, $group, explode('.', $value['action']), true);
+                            else
+                                \Acl::grantGroupPermission($permission, $group, array(), true);
+                        }
+                    }
+                }
+
+                \Flash::success(trans('messages.update_success', ['name' => trans('backend.group')]));
+            }
+            else
+            {
+                \Flash::warning(trans('messages.update_warning', ['name' => trans('backend.group')]));
+
+                return redirect()->back()->with('message', $response['message']);
+            }
 
             $response = [
-                'message' => 'Group updated.',
+                'message' => 'Role Update.',
                 'data'    => $group->toArray(),
             ];
 
@@ -234,16 +338,18 @@ class GroupsController extends Controller
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
+            \DB::commit();
+            return redirect()->route('admin.group.index');
         } catch (ValidatorException $e) {
-
+            \DB::rollBack();
             if ($request->wantsJson()) {
-
                 return response()->json([
                     'error'   => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
+
+            \Flash::error(trans('messages.update_error', ['name' => trans('backend.group')]));
 
             return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
@@ -259,16 +365,41 @@ class GroupsController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+        \DB::beginTransaction();
+        try {
+            $group = \App\Models\Acl\Group::find($id);
 
-        if (request()->wantsJson()) {
+            $roles = $group->getRoles()->get();
+            foreach ($roles as $role) {
+                \Acl::revokeGroupRole($role, $group);
+            }
 
-            return response()->json([
-                'message' => 'Group deleted.',
-                'deleted' => $deleted,
-            ]);
+            $permissions = $group->getPermissions()->get();
+            foreach ($permissions as $permission) {
+                \Acl::revokeGroupPermission($permission, $group);
+            }
+
+            $deleted = $this->repository->delete($id);
+            if (request()->wantsJson()) {
+
+                return response()->json([
+                    'message' => 'Role deleted.',
+                    'deleted' => $deleted,
+                ]);
+            }
+
+            if($deleted)
+                \Flash::success(trans('messages.destroy_success', ['name' => trans('backend.group')]));
+            else
+                \Flash::warning(trans('messages.destroy_warning', ['name' => trans('backend.group')]));
+
+            \DB::commit();
+            return redirect()->route('admin.group.index');
+        } catch (ValidatorException $e) {
+            \DB::rollBack();
+            \Flash::warning(trans('messages.destroy_error', ['name' => trans('backend.group')]));
+
+            return redirect()->route('admin.group.index');
         }
-
-        return redirect()->back()->with('message', 'Group deleted.');
     }
 }

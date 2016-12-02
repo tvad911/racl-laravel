@@ -201,7 +201,7 @@ class UsersController extends Controller
     public function destroy($id)
     {
         if($deleted = $this->repository->delete($id))
-            \Flash::success(trans('messages.delete_success', ['name' => trans('backend.user')]));
+            \Flash::success(trans('messages.destroy_success', ['name' => trans('backend.user')]));
         else
             \Flash::warning(trans('messages.destroy_warning', ['name' => trans('backend.user')]));
 

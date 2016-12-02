@@ -189,7 +189,7 @@
                 e.preventDefault();
                 var id = $(this).data('id');
                 $('#myModal').data('id', id).modal('show');
-                $('#myModal').find('form').attr('action',{{ config('app.url') }}+'/admin/role/'+ id);
+                $('#myModal').find('form').attr('action','{{ config('app.url') }}'+'/admin/role/'+ id);
             });
 
             $('.action_confirm').click(function() {
