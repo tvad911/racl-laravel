@@ -59,6 +59,18 @@
                         </div>
                     </div>
                     <!-- /.box-body -->
+                    <div class="box-body">
+                        <div class="form-group">
+                            {!! Form::label('group', trans('user.group')) !!}
+                            <select name="group_id" id="group_id" class="form-control" disabled="disabled">
+                                <option value=""></option>
+                                @foreach($groups as $group)
+                                    <option value="{{ $group->id }}" {!! ($item->group_id == $group->id) ? 'selected="selected"' : '' !!}>{{ $group->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
                      <div class="box-body">
                         <div class="form-group">
                             {!! Form::label('status', trans('messages.status')) !!}

@@ -45,7 +45,7 @@ class User extends Authenticatable implements SignesAclUserInterface, Transforma
      * @var array
      */
     protected $fillable = [
-        'username', 'name', 'email', 'password', 'status', 'group_id',
+        'login', 'username', 'name', 'email', 'password', 'group_id', 'status',
     ];
 
     /**

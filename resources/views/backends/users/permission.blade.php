@@ -23,7 +23,7 @@
                     <!-- /.box-header -->
                     @include('flash::message')
                     <!-- form start -->
-                    {!! Form::open(array('route' => array('admin.user.update', $item->id),'method' => 'put','role' => 'form')) !!}
+                    {!! Form::open(array('route' => array('admin.user.updatePermission', $item->id),'method' => 'put','role' => 'form')) !!}
 
                     <div class="box-body">
                         <div class="form-user">

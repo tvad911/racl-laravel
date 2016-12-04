@@ -9,6 +9,7 @@ use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\Backend\UserCreateRequest;
 use App\Http\Requests\Backend\UserUpdateRequest;
+use App\Http\Requests\Backend\UserUpdatePermisionRequest;
 use App\Repositories\UserRepository;
 use App\Repositories\GroupRepository;
 use App\Repositories\PermissionRepository;
@@ -99,6 +100,7 @@ class UsersController extends Controller
     public function store(UserCreateRequest $request)
     {
         $input = $request->only('email', 'username', 'name', 'group_id', 'status');
+        $input['login'] = $request->email;
         $input['password'] = bcrypt($request->password);
         if($this->repository->create($input))
         {
@@ -162,7 +164,7 @@ class UsersController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        $input = $request->only('email', 'username','name', 'status');
+        $input = $request->only('email', 'username','name', 'group_id', 'status');
         $password = $request->password;
         $passwordConfirmation = $request->password_confirmation;
 
@@ -323,6 +325,99 @@ class UsersController extends Controller
      */
     public function updatePermission(UserUpdatePermisionRequest $request, $id)
     {
+        \DB::beginTransaction();
+        try {
+            $user = $this->repository->find($id);
+            if($user)
+            {
+                $edit_roles_temp = $user->getRoles()->get();
+                $new_roles_temp = $request->role;
 
+                foreach ($edit_roles_temp as $edit_role) {
+                    if(!in_array($edit_role->id, $new_roles_temp))
+                    {
+                        \Acl::revokeUserRole($edit_role, $user);
+                    }
+                }
+
+                foreach($new_roles_temp as $new_role)
+                {
+                    if(!$edit_roles_temp->where('id', $new_role)->first())
+                    {
+                        $role = \App\Models\Acl\Role::where('id', $new_role)->first();
+                        \Acl::grantUserRole($role, $user);
+                    }
+                }
+
+                $new_permissions_temp = \Backend::getPermissionValue($request->permission);
+                $edit_permissions_temp = \Backend::getPermissionValueFromArray($user->getPermissions());
+                $all_permissions_temp = \Backend::getPermissionValueFromCollection($this->permission->all());
+
+                $new_permissions = \Backend::getNewPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);
+                $edit_permissions = \Backend::getEditPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);
+
+                if($edit_permissions)
+                {
+                    foreach($edit_permissions as $value)
+                    {
+                        $permission_arr = explode('.', $value['permission']);
+                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        if($permission)
+                        {
+                            \Acl::grantUserPermission($permission, $user, array(), true);
+                        }
+                    }
+                }
+
+                if($new_permissions_temp)
+                {
+                    foreach($new_permissions_temp as $value)
+                    {
+                        $permission_arr = explode('.', $value['permission']);
+                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        if($permission)
+                        {
+                            if(isset($value['action']) && $value['action'] != null)
+                                \Acl::grantUserPermission($permission, $user, explode('.', $value['action']), true);
+                            else
+                                \Acl::grantUserPermission($permission, $user, array(), true);
+                        }
+                    }
+                }
+
+                \Flash::success(trans('messages.update_success', ['name' => trans('backend.user')]));
+            }
+            else
+            {
+                \Flash::warning(trans('messages.update_warning', ['name' => trans('backend.user')]));
+
+                return redirect()->back()->with('message', $response['message']);
+            }
+
+            $response = [
+                'message' => 'Role Update.',
+                'data'    => $user->toArray(),
+            ];
+
+            if ($request->wantsJson()) {
+
+                return response()->json($response);
+            }
+
+            \DB::commit();
+            return redirect()->route('admin.user.index');
+        } catch (ValidatorException $e) {
+            \DB::rollBack();
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'error'   => true,
+                    'message' => $e->getMessageBag()
+                ]);
+            }
+
+            \Flash::error(trans('messages.update_error', ['name' => trans('backend.user')]));
+
+            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+        }
     }
 }
