@@ -230,7 +230,7 @@ class RolesController extends Controller
                  */
                 $new_permissions_temp = \Backend::getPermissionValue($request->permission);
                 $edit_permissions_temp = \Backend::getPermissionValueFromArray($role->getPermissions());
-                $all_permissions_temp = \Backend::getPermissionValueFromCollection($this->permission->all());
+                $all_permissions_temp = \Backend::getPermissionValueFromCollection(\App\Models\Acl\Permission::all());
 
                 $new_permissions = \Backend::getNewPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);
                 $edit_permissions = \Backend::getEditPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);

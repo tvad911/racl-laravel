@@ -11,18 +11,8 @@ class PermissionValidator extends LaravelValidator
 	protected $id;
 
     protected $rules = [
-        ValidatorInterface::RULE_CREATE => [
-        	'area'        => 'required|min:3|max:25',
-            'permission'  => 'required|min:3|max:25|unique_with:acl_permissions,area',
-            'actions'      => 'required|min:3|max:2048',
-            'description' => 'max:255',
-        ],
-        ValidatorInterface::RULE_UPDATE => [
-        	'area'        => 'required|min:3|max:25',
-            'permission'  => 'required|min:3|max:25',
-            'actions'      => 'required|min:3|max:2048',
-            'description' => 'max:255',
-        ],
+        ValidatorInterface::RULE_CREATE => [],
+        ValidatorInterface::RULE_UPDATE => [],
 	];
 
 	protected $messages = [
