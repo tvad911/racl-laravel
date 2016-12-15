@@ -17,6 +17,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+Route::get('/test', 'HomeController@test');
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('user/updatemulti', ['as' => 'user.updatemulti', 'uses' => 'Backend\UsersController@postUpdateMulti']);
     Route::get('user/export/{type}', ['as' => 'user.export', 'uses' => 'Backend\UsersController@export'])->where('type', '[A-Za-z]+');

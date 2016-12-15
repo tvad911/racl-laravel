@@ -111,7 +111,8 @@ class RolesController extends Controller
                     foreach($permissions as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             \Acl::grantRolePermission($permission, $role, explode('.', $value['action']));
@@ -208,16 +209,12 @@ class RolesController extends Controller
      */
     public function update(RoleUpdateRequest $request, $id)
     {
-        $role = \App\Models\Acl\Role::find($id);
-
         \DB::beginTransaction();
         try {
 
             $this->validator->with($request->only('name', 'filter'))->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
             $role = $this->repository->update($request->only('name', 'filter'), $id);
-
-
             /**
              * Check role exist
              * If role is exist then do the job inside, if not then return with message
@@ -245,7 +242,7 @@ class RolesController extends Controller
                     foreach($edit_permissions as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             \Acl::grantRolePermission($permission, $role, array(), true);
@@ -258,7 +255,8 @@ class RolesController extends Controller
                     foreach($new_permissions_temp as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             if(isset($value['action']) && $value['action'] != null)
@@ -316,7 +314,7 @@ class RolesController extends Controller
      */
     public function destroy($id)
     {
-        $role = \App\Models\Acl\Role::find($id);
+        $role = $this->repository->find($id);
 
         $permissions = $role->getPermissions()->get();
         foreach ($permissions as $permission) {

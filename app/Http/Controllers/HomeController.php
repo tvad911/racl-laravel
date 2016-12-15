@@ -25,4 +25,17 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    /**
+     * [test description]
+     * @return [type] [description]
+     */
+    public function test()
+    {
+        $str = 'abc123DDD';
+        $id = 5;
+        $name = $id . '_' . strtolower($str) . '_' . substr(md5(time()), 0 , 8);
+
+        dd($name);
+    }
 }
