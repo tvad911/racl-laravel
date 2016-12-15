@@ -344,7 +344,8 @@ class UsersController extends Controller
                 {
                     if(!$edit_roles_temp->where('id', $new_role)->first())
                     {
-                        $role = \App\Models\Acl\Role::where('id', $new_role)->first();
+                        $this->role->skipCriteria();
+                        $role = $this->role->findWhere('id', $new_role)->first();
                         \Acl::grantUserRole($role, $user);
                     }
                 }
@@ -361,7 +362,8 @@ class UsersController extends Controller
                     foreach($edit_permissions as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             \Acl::grantUserPermission($permission, $user, array(), true);
@@ -374,7 +376,8 @@ class UsersController extends Controller
                     foreach($new_permissions_temp as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             if(isset($value['action']) && $value['action'] != null)

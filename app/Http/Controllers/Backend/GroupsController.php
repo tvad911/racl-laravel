@@ -122,7 +122,8 @@ class GroupsController extends Controller
                     foreach($permissions as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             \Acl::grantGroupPermission($permission, $group, explode('.', $value['action']));
@@ -232,7 +233,6 @@ class GroupsController extends Controller
 
             $group = $this->repository->update($request->only('name'), $id);
 
-
             /**
              * Check role exist
              * If role is exist then do the job inside, if not then return with message
@@ -269,7 +269,8 @@ class GroupsController extends Controller
                 {
                     if(!$edit_roles_temp->where('id', $new_role)->first())
                     {
-                        $role = \App\Models\Acl\Role::where('id', $new_role)->first();
+                        $this->role->skipCriteria();
+                        $role = $this->role->findWhere('id', $new_role)->first();
                         \Acl::grantGroupRole($role, $group);
                     }
                 }
@@ -295,7 +296,8 @@ class GroupsController extends Controller
                     foreach($edit_permissions as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             \Acl::grantGroupPermission($permission, $group, array(), true);
@@ -308,7 +310,8 @@ class GroupsController extends Controller
                     foreach($new_permissions_temp as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
-                        $permission = \App\Models\Acl\Permission::where(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
+                        $this->permission->skipCriteria();
+                        $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {
                             if(isset($value['action']) && $value['action'] != null)
@@ -367,7 +370,8 @@ class GroupsController extends Controller
     {
         \DB::beginTransaction();
         try {
-            $group = \App\Models\Acl\Group::find($id);
+            $this->repository->skipCriteria();
+            $group = $this->repository->find($id);
 
             $roles = $group->getRoles()->get();
             foreach ($roles as $role) {

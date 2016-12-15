@@ -67,8 +67,8 @@
                                             Search:
                                         </label>
                                         <input aria-controls="example1" placeholder="" class="form-control input-sm" type="search" name="search">
-                                        {!! Form::select('searchFields', array( 'id;area;role;actions' => 'Search by All', 'id' => 'Search by ID', 'area' =>
-                                        'Search by Area', 'role' => 'Search by role', 'actions' => 'Search by Actions'),
+                                        {!! Form::select('searchFields', array( 'id;name' => 'Search by All', 'id' => 'Search by ID', 'name' =>
+                                        'Search by Name'),
                                         'all',array('class' => 'form-control input-sm', 'aria-controls' => 'example1'))
                                         !!}
                                         <button class="btn btn-sm btn-info" type="submit">Apply</button>
