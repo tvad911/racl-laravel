@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class GroupPolicy
 {
     use HandlesAuthorization;
-    $resource = 'admin.user';
+    protected $resource = 'admin.user';
 
     /**
      * Determine whether the user can view the group index.
@@ -35,7 +35,11 @@ class GroupPolicy
      */
     public function view(User $user, Group $group)
     {
-        //
+        $resource = $this->resource. '|view';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
     }
 
     /**
@@ -46,7 +50,11 @@ class GroupPolicy
      */
     public function create(User $user)
     {
-        //
+        $resource = $this->resource. '|create';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
     }
 
     /**
@@ -58,7 +66,11 @@ class GroupPolicy
      */
     public function update(User $user, Group $group)
     {
-        //
+        $resource = $this->resource. '|update';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
     }
 
     /**
@@ -70,7 +82,15 @@ class GroupPolicy
      */
     public function delete(User $user, Group $group)
     {
-        //
+        $resource = $this->resource. '|delete';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
+        else{
+            if($user->id === $group->user_id)
+                return true;
+        }
     }
 
     /**
@@ -82,7 +102,11 @@ class GroupPolicy
      */
     public function destroy(User $user, Group $group)
     {
-        //
+        $resource = $this->resource. '|destroy';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
     }
 
     /**
@@ -94,7 +118,11 @@ class GroupPolicy
      */
     public function edit(User $user, Group $group)
     {
-        //
+        $resource = $this->resource. '|edit';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
     }
 
     /**
@@ -106,7 +134,27 @@ class GroupPolicy
      */
     public function store(User $user, Group $group)
     {
-        //
+        $resource = $this->resource. '|store';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can show the group.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Group  $group
+     * @return mixed
+     */
+    public function show(User $user, Group $group)
+    {
+        $resource = $this->resource. '|show';
+        if(\Acl::isAllow($resource(), $user))
+        {
+            return true;
+        }
     }
 }
 
