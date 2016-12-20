@@ -402,36 +402,42 @@ class Backend
      */
     function getPermissionValue($permissions)
     {
-    	$temp = array();
-        foreach ($permissions as $permission)
-        {
-            $var = explode('|', $permission);
-            $tmp['permission'] = $var[0];
-            $tmp['action'] = $var[1];
-            array_push($temp, $tmp);
-        }
+    	if($permissions != null)
+    	{
+    		$temp = array();
+	        foreach ($permissions as $permission)
+	        {
+	            $var = explode('|', $permission);
+	            $tmp['permission'] = $var[0];
+	            $tmp['action'] = $var[1];
+	            array_push($temp, $tmp);
+	        }
 
-        $collection = collect($temp);
-        $grouped = $collection->groupBy('permission');
-        $arr = $grouped->toArray();
+	        $collection = collect($temp);
+	        $grouped = $collection->groupBy('permission');
+	        $arr = $grouped->toArray();
 
-        $newtemp = array();
+	        $newtemp = array();
 
-        $t = 0;
-        foreach ($arr as $key => $value) {
-            $newtemp[$t]['permission'] = $key;
-            $newtemp[$t]['action'] = '';
-            foreach ($value as $key1 => $value2) {
-                $newtemp[$t]['action'] .= $value2['action'];
-                if(end($value) != $value2)
-                {
-                    $newtemp[$t]['action'] .= '.';
-                }
-            }
-            $t++;
-        }
+	        $t = 0;
+	        foreach ($arr as $key => $value) {
+	            $newtemp[$t]['permission'] = $key;
+	            $newtemp[$t]['action'] = '';
+	            foreach ($value as $key1 => $value2) {
+	                $newtemp[$t]['action'] .= $value2['action'];
+	                if(end($value) != $value2)
+	                {
+	                    $newtemp[$t]['action'] .= '.';
+	                }
+	            }
+	            $t++;
+	        }
 
-        return $newtemp;
+	        return $newtemp;
+    	}
+    	else
+    		return null;
+
     }
     /**
      * Show list actions and check action was chosed
@@ -633,18 +639,21 @@ class Backend
      */
     public function getEditPermission($new_permissions, $edit_permissions, $all_permissions)
     {
-    	foreach($new_permissions as $key => $value)
+    	if($new_permissions != null)
     	{
-    		$permission = $value['permission'];
-    		foreach ($edit_permissions as $key_edit => $value_edit) {
-    			if($permission == $value_edit['permission'])
-    			{
-    				unset($edit_permissions[$key_edit]);
-    			}
-    		}
-    	}
+    		foreach($new_permissions as $key => $value)
+	    	{
+	    		$permission = $value['permission'];
+	    		foreach ($edit_permissions as $key_edit => $value_edit) {
+	    			if($permission == $value_edit['permission'])
+	    			{
+	    				unset($edit_permissions[$key_edit]);
+	    			}
+	    		}
+	    	}
 
-    	return $edit_permissions;
+	    	return $edit_permissions;
+    	}
     }
 
     /**

@@ -270,7 +270,7 @@ class GroupsController extends Controller
                     if(!$edit_roles_temp->where('id', $new_role)->first())
                     {
                         $this->role->skipCriteria();
-                        $role = $this->role->findWhere('id', $new_role)->first();
+                        $role = $this->role->findWhere(['id' => $new_role])->first();
                         \Acl::grantGroupRole($role, $group);
                     }
                 }

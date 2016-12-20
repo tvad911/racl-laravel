@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Models\Acl\Group;
+use App\Policies\Backend\GroupPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        // 'App\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\Acl\Group' => 'App\Policies\Backend\GroupPolicy',
     ];
 
     /**
@@ -25,6 +28,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        // Gate::define('group-index', function ($user, $group) {
+        //     return true;
+        // });
     }
 }

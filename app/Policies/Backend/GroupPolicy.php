@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class GroupPolicy
 {
     use HandlesAuthorization;
-    protected $resource = 'admin.user';
+    protected $resource = 'admin.group';
 
     /**
      * Determine whether the user can view the group index.
@@ -17,7 +17,7 @@ class GroupPolicy
      * @param  \App\Group  $group
      * @return mixed
      */
-    public function index(User $user, Group $group)
+    public function index(User $user)
     {
         $resource = $this->resource. '|index';
         if(\Acl::isAllow($resource(), $user))
@@ -86,10 +86,6 @@ class GroupPolicy
         if(\Acl::isAllow($resource(), $user))
         {
             return true;
-        }
-        else{
-            if($user->id === $group->user_id)
-                return true;
         }
     }
 
