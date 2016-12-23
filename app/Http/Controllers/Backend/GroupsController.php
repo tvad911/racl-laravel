@@ -47,6 +47,10 @@ class GroupsController extends Controller
      */
     public function index()
     {
+        // dd(\App\Models\Acl\Group::class);
+        $group = new \App\Models\Acl\Group();
+        // dd($group);
+        $this->authorize('view', $group);
         $options = $this->para;
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $items = $this->repository->scopeQuery(function($query){
