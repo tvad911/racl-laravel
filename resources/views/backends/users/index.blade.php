@@ -96,7 +96,7 @@
                                     {!! Backend::columns_sort('Email', 'email', $sortedBy, $options) !!}
                                     {!! Backend::columns_sort('Created at', 'created_at', $sortedBy, $options) !!}
                                     {!! Backend::columns_sort('Updated at', 'updated_at', $sortedBy, $options) !!}
-                                    {!! Backend::columns_sort('Created by', 'created_by', $sortedBy, $options) !!}
+                                    {!! Backend::columns_none_sort('Created by', 'created_by', $sortedBy, $options) !!}
                                     {!! Backend::columns_sort('Status', 'status', $sortedBy, $options) !!}
                                     <th>Action</th>
                                 </tr>

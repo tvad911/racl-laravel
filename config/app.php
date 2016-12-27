@@ -200,6 +200,7 @@ return [
         Collective\Bus\BusServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider::class,
+        Lord\Laroute\LarouteServiceProvider::class,
 
     ],
 

@@ -21,7 +21,8 @@
         "phpoffice/phpexcel": "^1.8",
         "laravelcollective/bus": "^5.2",
         "mpdf/mpdf": "~5.7.3",
-        "felixkiss/uniquewith-validator": "2.*"
+        "felixkiss/uniquewith-validator": "2.*",
+        "lord/laroute": "^2.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

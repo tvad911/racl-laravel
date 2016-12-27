@@ -18,7 +18,7 @@ class GroupPolicy
      * @param  \App\Group  $group
      * @return mixed
      */
-    public function view(User $user, Group $group)
+    public function index(User $user, Group $group)
     {
         $resource = $this->resource. '|index';
         if(\Acl::isAllow($resource, $user))
@@ -35,7 +35,56 @@ class GroupPolicy
      */
     public function create(User $user)
     {
-        //
+        $resource = $this->resource. '|create';
+        if(\Acl::isAllow($resource, $user))
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can store groups.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function store(User $user, Group $group)
+    {
+        $resource = $this->resource. '|store';
+        if(\Acl::isAllow($resource, $user))
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can show groups.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function show(User $user, Group $group)
+    {
+        $resource = $this->resource. '|show';
+        if(\Acl::isAllow($resource, $user))
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can edit groups.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function edit(User $user, Group $group)
+    {
+        $resource = $this->resource. '|edit';
+        if(\Acl::isAllow($resource, $user))
+        {
+            return true;
+        }
     }
 
     /**
@@ -58,6 +107,18 @@ class GroupPolicy
      * @return mixed
      */
     public function delete(User $user, Group $group)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can delete the group.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Group  $group
+     * @return mixed
+     */
+    public function destroy(User $user, Group $group)
     {
         //
     }

@@ -47,10 +47,8 @@ class GroupsController extends Controller
      */
     public function index()
     {
-        // dd(\App\Models\Acl\Group::class);
         $group = new \App\Models\Acl\Group();
-        // dd($group);
-        $this->authorize('view', $group);
+        $this->authorize('index', $group);
         $options = $this->para;
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $items = $this->repository->scopeQuery(function($query){
@@ -74,6 +72,8 @@ class GroupsController extends Controller
      */
     public function create()
     {
+        $group = new \App\Models\Acl\Group();
+        $this->authorize('create', $group);
         $this->permission->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $permissions =  $this->permission->all();
         $this->role->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
@@ -91,6 +91,8 @@ class GroupsController extends Controller
      */
     public function store(GroupCreateRequest $request)
     {
+        $group = new \App\Models\Acl\Group();
+        $this->authorize('store', $group);
         \DB::beginTransaction();
         try {
 
@@ -263,19 +265,28 @@ class GroupsController extends Controller
                  */
 
                 foreach ($edit_roles_temp as $edit_role) {
-                    if(!in_array($edit_role->id, $new_roles_temp))
+                    if($new_roles_temp != null)
+                    {
+                        if(!in_array($edit_role->id, $new_roles_temp))
+                        {
+                            \Acl::revokeGroupRole($edit_role, $group);
+                        }
+                    }
+                    else
                     {
                         \Acl::revokeGroupRole($edit_role, $group);
                     }
                 }
-
-                foreach($new_roles_temp as $new_role)
+                if($new_roles_temp != null)
                 {
-                    if(!$edit_roles_temp->where('id', $new_role)->first())
+                    foreach($new_roles_temp as $new_role)
                     {
-                        $this->role->skipCriteria();
-                        $role = $this->role->findWhere(['id' => $new_role])->first();
-                        \Acl::grantGroupRole($role, $group);
+                        if(!$edit_roles_temp->where('id', $new_role)->first())
+                        {
+                            $this->role->skipCriteria();
+                            $role = $this->role->findWhere(['id' => $new_role])->first();
+                            \Acl::grantGroupRole($role, $group);
+                        }
                     }
                 }
                 /**

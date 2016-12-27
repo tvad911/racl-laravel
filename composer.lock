@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fe7e9b82399188d4bcbad0bee2705547",
-    "content-hash": "08c42a13b9632859cfa324de04e5702e",
+    "hash": "ea03e31ccaf19cdf760d6d71890b7dbd",
+    "content-hash": "2b90e9bde189c9f3b0d5485b867e40ca",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1118,6 +1118,57 @@
                 "storage"
             ],
             "time": "2016-10-19 20:38:46"
+        },
+        {
+            "name": "lord/laroute",
+            "version": "v2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aaronlord/laroute.git",
+                "reference": "97a3812af4bcc4cad87c52c142f407c270e20f09"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aaronlord/laroute/zipball/97a3812af4bcc4cad87c52c142f407c270e20f09",
+                "reference": "97a3812af4bcc4cad87c52c142f407c270e20f09",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/config": "5.0.*|5.1.*|5.2.*|5.3.*",
+                "illuminate/console": "5.0.*|5.1.*|5.2.*|5.3.*",
+                "illuminate/filesystem": "5.0.*|5.1.*|5.2.*|5.3.*",
+                "illuminate/routing": "5.0.*|5.1.*|5.2.*|5.3.*",
+                "illuminate/support": "5.0.*|5.1.*|5.2.*|5.3.*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Lord\\Laroute\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Lord",
+                    "email": "hello@aaronlord.is"
+                }
+            ],
+            "description": "Access Laravels URL/Route helper functions, from JavaScript.",
+            "keywords": [
+                "javascript",
+                "laravel",
+                "routes",
+                "routing"
+            ],
+            "time": "2016-08-12 13:38:39"
         },
         {
             "name": "maatwebsite/excel",
