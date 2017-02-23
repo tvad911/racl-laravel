@@ -202,6 +202,7 @@ return [
         Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider::class,
         Lord\Laroute\LarouteServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
 
     ],
 

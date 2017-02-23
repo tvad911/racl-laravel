@@ -7,6 +7,7 @@ use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 use Illuminate\Notifications\Notifiable;
 use Signes\Acl\UserInterface as SignesAclUserInterface;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * Class User
@@ -18,6 +19,8 @@ class User extends Authenticatable implements SignesAclUserInterface, Transforma
     use Notifiable;
     use SoftDeletes;
     use TransformableTrait;
+    use HasApiTokens;
+
 
     /**
      * Application namespace

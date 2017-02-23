@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Models\Acl\Group;
 use App\Policies\Backend\GroupPolicy;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -31,5 +32,6 @@ class AuthServiceProvider extends ServiceProvider
         // Gate::define('group-index', function ($user, $group) {
         //     return true;
         // });
+        Passport::routes();
     }
 }
