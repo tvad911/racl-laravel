@@ -49,6 +49,7 @@ class GroupsController extends Controller
     {
         $group = new \App\Models\Acl\Group();
         $this->authorize('index', $group);
+        // dd(\Auth::user()->getPermissions);
         $options = $this->para;
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $items = $this->repository->scopeQuery(function($query){
@@ -420,5 +421,24 @@ class GroupsController extends Controller
 
             return redirect()->route('admin.group.index');
         }
+    }
+
+    /**
+     * Get the map of resource methods to ability names.
+     *
+     * @return array
+     */
+    protected function resourceAbilityMap()
+    {
+        return [
+            'index' => 'index',
+            'create' => 'create',
+            'store' => 'store',
+            'show' => 'show',
+            'edit' => 'edit',
+            'update' => 'update',
+            'destroy' => 'destroy',
+            'delete' => 'delete'
+        ];
     }
 }

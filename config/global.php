@@ -4,6 +4,6 @@ return [
     /**
      * Số phần tử trên trang
      */
-    'items_per_page' => 10,
+    'items_per_page' => 25,
 
 ];

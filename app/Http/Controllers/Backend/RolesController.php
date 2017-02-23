@@ -233,15 +233,17 @@ class RolesController extends Controller
                 $edit_permissions = \Backend::getEditPermission($new_permissions_temp, $edit_permissions_temp, $all_permissions_temp);
 
                 /**
-                 * $new_permission là tiến hành thêm mới permission vào role.
-                 * $edit_permission là tiến hành xóa permission hay cập nhật actions cho role là rỗng.
+                 * $new_permissions là tiến hành thêm mới permission vào role.
+                 * $edit_permissions là tiến hành xóa permission hay cập nhật actions cho role là rỗng.
                  * $edit_permissions_temp là tiến hành cập nhật lại actions cho các permission này.
                  */
+
                 if($edit_permissions)
                 {
                     foreach($edit_permissions as $value)
                     {
                         $permission_arr = explode('.', $value['permission']);
+                        $this->permission->skipCriteria();
                         $permission = $this->permission->findWhere(['area' => $permission_arr[0], 'permission' => $permission_arr[1]])->first();
                         if($permission)
                         {

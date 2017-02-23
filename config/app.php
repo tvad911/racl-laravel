@@ -174,7 +174,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
@@ -197,10 +197,11 @@ return [
 
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
-        Collective\Bus\BusServiceProvider::class,
+        // Collective\Bus\BusServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider::class,
         Lord\Laroute\LarouteServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class,
 
     ],
 

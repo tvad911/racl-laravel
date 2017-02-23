@@ -617,17 +617,24 @@ class Backend
      */
     public function getNewPermission($new_permissions, $edit_permissions, $all_permissions)
     {
-    	foreach ($edit_permissions as $key => $value) {
-    		$permission = $value['permission'];
-    		foreach ($new_permissions as $key_new => $value_new) {
-    			if($permission == $value_new['permission'])
-    			{
-    				unset($new_permissions[$key_new]);
-    			}
-    		}
-    	}
+    	if($edit_permissions != null)
+    	{
+    		foreach ($edit_permissions as $key => $value) {
+	    		$permission = $value['permission'];
+	    		if($new_permissions != null)
+	    		{
+	    			foreach ($new_permissions as $key_new => $value_new) {
+		    			if($permission == $value_new['permission'])
+		    			{
+		    				unset($new_permissions[$key_new]);
+		    			}
+		    		}
+	    		}
 
-    	return $new_permissions;
+	    	}
+
+	    	return $new_permissions;
+    	}
     }
 
     /**
@@ -654,6 +661,8 @@ class Backend
 
 	    	return $edit_permissions;
     	}
+    	else
+    		return $edit_permissions;
     }
 
     /**
