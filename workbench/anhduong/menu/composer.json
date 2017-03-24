@@ -1,0 +1,23 @@
+{
+    "name": "anhduong/menu",
+    "description": "A packet to make manager menu for Laravel ACL",
+    "authors": [
+        {
+            "name": "Ánh Dương",
+            "email": "anhduongphuong@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4",
+        "illuminate/support": "5.4.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-4": {
+            "Anhduong\\Menu\\": "src/Anhduong/Menu"
+        }
+    },
+    "minimum-stability": "stable"
+}

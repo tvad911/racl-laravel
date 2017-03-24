@@ -43,6 +43,7 @@
         ],
         "psr-4": {
             "App\\": "app/"
+            // "Anhduong\\Menu\\": "workbench/anhduong/menu/src"
         }
     },
     "autoload-dev": {

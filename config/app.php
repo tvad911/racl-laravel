@@ -203,6 +203,7 @@ return [
         Lord\Laroute\LarouteServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
+        Jackiedo\Workbench\WorkbenchServiceProvider::class,
 
     ],
 
