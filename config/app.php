@@ -204,6 +204,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Jackiedo\Workbench\WorkbenchServiceProvider::class,
+        Anhduong\Menu\MenuServiceProvider::class,
 
     ],
 

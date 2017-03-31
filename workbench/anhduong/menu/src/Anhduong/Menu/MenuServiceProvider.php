@@ -24,7 +24,8 @@ class MenuServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$packageRoutesPath       = __DIR__ . '/../../routes/demo.php';
+
+        // $packageRoutesPath       = __DIR__ . '/../../routes/web.php';
 		$packageConfigPath       = __DIR__ . '/../../config/config.php';
 		$packageMigrationsPath   = __DIR__ . '/../../migrations';
 		$packageAssetsPath       = __DIR__ . '/../../resources/assets';
@@ -34,7 +35,7 @@ class MenuServiceProvider extends ServiceProvider {
 		/**
 		 * Loading package's routes and controllers
 		 */
-		include $packageRoutesPath;
+		// include $packageRoutesPath;
 
 		/**
 		 * Loading and publishing package's config
@@ -95,6 +96,8 @@ class MenuServiceProvider extends ServiceProvider {
 		{
 			return new Menu;
 		});
+
+		$this->app->register('Anhduong\Menu\Providers\RouteServiceProvider');
 	}
 
 	/**
