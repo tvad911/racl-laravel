@@ -15,10 +15,9 @@ class CreateCategoryLangTable extends Migration
     {
         Schema::create('category_lang', function (Blueprint $table) {
             $table->integer('category_id');
-            $table->foreign('category_id')->references('id')->on('category');
+            // $table->foreign('category_id')->references('id')->on('category');
             $table->integer('lang_id');
-            $table->foreign('lang_id')->references('id')->on('lang');
-            $table->primary(['category_id', 'lang_id']);
+            // $table->foreign('lang_id')->references('id')->on('lang');
             $table->string('name', 255);
             $table->string('slug', 255);
             $table->string('description', 255)->nullable();
@@ -27,6 +26,7 @@ class CreateCategoryLangTable extends Migration
             $table->string('meta_description')->nullable();
             $table->softDeletes();
             $table->timestamps();
+            $table->primary(['category_id', 'lang_id']);
         });
     }
 

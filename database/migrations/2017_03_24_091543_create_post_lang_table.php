@@ -14,10 +14,10 @@ class CreatePostLangTable extends Migration
     public function up()
     {
         Schema::create('post_lang', function (Blueprint $table) {
-            $table->increments('post_id');
-            $table->foreign('post_id')->references('id')->on('post');
+            $table->integer('post_id');
+            // $table->foreign('post_id')->references('id')->on('post');
             $table->integer('lang_id');
-            $table->foreign('lang_id')->references('id')->on('lang');
+            // $table->foreign('lang_id')->references('id')->on('lang');
             $table->primary(['post_id', 'lang_id']);
             $table->string('title', 255);
             $table->string('slug', 255);

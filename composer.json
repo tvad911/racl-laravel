@@ -35,7 +35,7 @@
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*",
         "baum/baum": "~1.1",
-        "laracasts/generators": "^1.1"
+        "laracasts/generators": "dev-master"
     },
     "autoload": {
         "classmap": [
