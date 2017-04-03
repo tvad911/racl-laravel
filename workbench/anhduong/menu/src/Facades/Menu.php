@@ -1,4 +1,5 @@
-<?php namespace Anhduong\Menu\Facades;
+<?php
+namespace Anhduong\Menu\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
