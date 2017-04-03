@@ -27,11 +27,11 @@ class MenuServiceProvider extends ServiceProvider {
     {
 
         // $packageRoutesPath       = __DIR__ . '/../../routes/web.php';
-        $packageConfigPath       = __DIR__ . '../config/config.php';
-        $packageMigrationsPath   = __DIR__ . '../migrations';
-        $packageAssetsPath       = __DIR__ . '../resources/assets';
-        $packageTranslationsPath = __DIR__ . '../resources/lang';
-        $packageViewsPath        = __DIR__ . '../resources/views';
+        $packageConfigPath       = __DIR__.'/../config/menu.php';
+        $packageMigrationsPath   = __DIR__.'/../migrations/';
+        $packageAssetsPath       = __DIR__ . '/../resources/assets';
+        $packageTranslationsPath = __DIR__ . '/../resources/lang';
+        $packageViewsPath        = __DIR__ . '/../resources/views';
 
         /**
          * Loading package's routes and controllers
@@ -99,6 +99,9 @@ class MenuServiceProvider extends ServiceProvider {
         });
 
         $this->app->register('Anhduong\Menu\Providers\RouteServiceProvider');
+
+        $this->app->bind(\Anhduong\Menu\Repositories\MenuRepository::class, \Anhduong\Menu\Repositories\MenuRepositoryEloquent::class);
+        //:end-bindings:
     }
 
     /**

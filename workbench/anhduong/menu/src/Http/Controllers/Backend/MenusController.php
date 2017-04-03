@@ -5,6 +5,7 @@ namespace Anhduong\Menu\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 use Anhduong\Menu\Http\Requests\Backend\MenuCreateRequest;
@@ -48,15 +49,15 @@ class MenusController extends Controller
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         if($options['in_trash'] == 'yes')
         {
-            $this->repository->pushCriteria(app('App\Repositories\Criterias\User\InTrash'));
+            $this->repository->pushCriteria(app('Anhduong\Menu\Repositories\Criterias\Menu\InTrash'));
         }
         switch ($options['status']) {
             case 'publish':
-                $this->repository->pushCriteria(app('App\Repositories\Criterias\User\StatusPublish'));
+                $this->repository->pushCriteria(app('Anhduong\Menu\Repositories\Criterias\Menu\StatusPublish'));
                 break;
 
             case 'draft':
-                $this->repository->pushCriteria(app('App\Repositories\Criterias\User\StatusDraft'));
+                $this->repository->pushCriteria(app('Anhduong\Menu\Repositories\Criterias\Menu\StatusDraft'));
                 break;
 
             default:
@@ -64,16 +65,26 @@ class MenusController extends Controller
         }
         $items = $this->repository->scopeQuery(function($query){
                 return $query->orderBy('id','desc');
-            })->paginate($options['items_per_page'], array('id', 'name', 'username', 'email', 'created_at', 'updated_at', 'status'));
+            })->paginate($options['items_per_page'], array('id', 'title', 'slug', 'status'));
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $menus,
+                'data' => $items,
             ]);
         }
 
-        return view('backends.users.index', compact('items','total','params', 'options'));
+        return view('vendor.menu.backends.menus.index', compact('items','total','params', 'options'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('vendor.menu.backends.menus.create');
     }
 
     /**
@@ -85,34 +96,28 @@ class MenusController extends Controller
      */
     public function store(MenuCreateRequest $request)
     {
+        $input = $request->only('title', 'slug', 'status');
 
-        try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $menu = $this->repository->create($request->all());
-
-            $response = [
-                'message' => 'Menu created.',
-                'data'    => $menu->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+        if($item = $this->repository->create($input))
+        {
+            \Flash::success(trans('messages.add_success', ['name' => trans('backend.user')]));
         }
+        else
+        {
+            \Flash::warning(trans('messages.add_warning', ['name' => trans('backend.user')]));
+        }
+
+        $response = [
+            'message' => 'Menu created.',
+            'data'    => $item->toArray(),
+        ];
+
+        if ($request->wantsJson()) {
+
+            return response()->json($response);
+        }
+
+        return redirect()->route('admin.menu.index');
     }
 
 
@@ -125,16 +130,16 @@ class MenusController extends Controller
      */
     public function show($id)
     {
-        $menu = $this->repository->find($id);
+        $item = $this->repository->find($id);
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $menu,
+                'data' => $item,
             ]);
         }
 
-        return view('menus.show', compact('menu'));
+        return view('vendor.menu.backends.menus.show', compact('item'));
     }
 
 
@@ -148,9 +153,9 @@ class MenusController extends Controller
     public function edit($id)
     {
 
-        $menu = $this->repository->find($id);
+        $item = $this->repository->find($id);
 
-        return view('menus.edit', compact('menu'));
+        return view('vendor.menu.backends.menus.edit', compact('item'));
     }
 
 
@@ -217,5 +222,89 @@ class MenusController extends Controller
         }
 
         return redirect()->back()->with('message', 'Menu deleted.');
+    }
+
+    /**
+     * [postUpdateMulti description]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function postUpdateMulti(Request $request)
+    {
+        $list_item = $request->items;
+        if(isset($request->doAction))
+        {
+            if($request->doAction == 'publish')
+            {
+                $params = array('status' => 1);
+                $this->repository->updates($list_item, $params);
+            }
+            elseif($request->doAction == 'draft')
+            {
+                $params = array('status' => 0);
+                $this->repository->updates($list_item, $params);
+            }
+            elseif($request->doAction == 'trash')
+            {
+                $this->repository->softDeletesMulti($list_item);
+            }
+            elseif($request->doAction == 'restore')
+            {
+                $this->repository->restoreMulti($list_item);
+            }
+            elseif($request->doAction == 'delete')
+            {
+                $this->repository->destroyMulti($list_item);
+            }
+        }
+
+        return redirect()->route('admin.user.index');
+    }
+
+    /**
+     * Export data to csv type
+     * @return [type] [description]
+     */
+    public function export($type)
+    {
+        $options = $this->para;
+        $items = $this->repository->scopeQuery(function($query){
+                return $query->orderBy('id','desc');
+            })->all(array('id', 'username', 'email', 'name', 'created_at', 'updated_at', 'status'));
+
+        \Excel::create('Filename', function($excel) use($items) {
+
+            $excel->sheet('Sheetname', function($sheet) use($items) {
+
+                // Set auto size for sheet
+                $sheet->setAutoSize(true);
+
+                $sheet->cells('A1:G1', function($cells) {
+                    $cells->setBackground('#000000');
+                    $cells->setFontWeight('bold');
+                });
+                $sheet->fromArray($items, null, 'A1', true);
+            });
+
+        })->export($type);
+    }
+
+    /**
+     * Get the map of resource methods to ability names.
+     *
+     * @return array
+     */
+    protected function resourceAbilityMap()
+    {
+        return [
+            'index' => 'index',
+            'create' => 'create',
+            'store' => 'store',
+            'show' => 'show',
+            'edit' => 'edit',
+            'update' => 'update',
+            'destroy' => 'destroy',
+            'delete' => 'delete'
+        ];
     }
 }

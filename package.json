@@ -16,5 +16,8 @@
     "lodash": "^4.17.4",
     "vue": "^2.1.10",
     "vue-resource": "^1.2.1"
+  },
+  "dependencies": {
+    "speakingurl": "^13.0.0"
   }
 }

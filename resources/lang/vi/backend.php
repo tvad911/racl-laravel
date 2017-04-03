@@ -18,6 +18,7 @@ return [
     'permission' => 'Quyền hạn',
     'role'       => 'Role',
     'group'      => 'Nhóm thành viên',
+    'menu'       => 'Menu',
     'create'     => 'Thêm :name',
     'show'       => 'Xem thông tin :name',
     'edit'       => 'Sửa thông tin :name',

@@ -39,7 +39,7 @@
 
             <li class="treeview active">
                 <a href="#">
-                    <i class="fa fa fa-user"></i> <span>{{ trans('backend.user') }}</span>
+                    <i class="fa fa-user"></i> <span>{{ trans('backend.user') }}</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
@@ -50,13 +50,24 @@
             </li>
             <li class="treeview active">
                 <a href="#">
-                    <i class="fa fa fa-user"></i> <span>{{ trans('backend.permission') }}</span>
+                    <i class="fa fa-user"></i> <span>{{ trans('backend.permission') }}</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{ route('admin.group.index') }}"><i class="fa fa-circle-o"></i> {{ trans('backend.index', ['name' => trans('backend.group') ]) }}</a></li>
                     <li><a href="{{ route('admin.role.index') }}"><i class="fa fa-circle-o"></i> {{ trans('backend.index', ['name' => trans('backend.role') ]) }}</a></li>
                     <li class="active"><a href="{{ route('admin.permission.index') }}"><i class="fa fa-circle-o"></i> {{ trans('backend.index', ['name' => trans('backend.permission') ]) }}</a></li>
+                </ul>
+            </li>
+
+            <li class="treeview active">
+                <a href="#">
+                    <i class="fa fa-bars "></i> <span>{{ trans('backend.menu') }}</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{{ route('admin.menu.create') }}"><i class="fa fa-circle-o"></i> {{ trans('backend.create', ['name' => trans('backend.menu') ]) }}</a></li>
+                    <li class="active"><a href="{{ route('admin.menu.index') }}"><i class="fa fa-circle-o"></i> {{ trans('backend.index', ['name' => trans('backend.menu') ]) }}</a></li>
                 </ul>
             </li>
 

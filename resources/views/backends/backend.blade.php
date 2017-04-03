@@ -96,9 +96,11 @@
 <!-- Ckeditor 4.4.3 -->
 <script src="{{ asset('public/dist/js/ckeditor.js') }}"></script>
 <!-- CKFinder -->
-<script src="{{ asset('public/plugins/ckfinder/ckfinder.js') }}"></script>
+{{-- <script src="{{ asset('public/plugins/ckfinder/ckfinder.js') }}"></script> --}}
 <!-- Bootstrap WYSIHTML5 -->
 <script src="{{ asset('public/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
+<!-- SpeakingUrl -->
+<script src="{{ url('node_modules/speakingurl/speakingurl.min.js') }}"></script>
 @yield('script')
 </body>
 </html>

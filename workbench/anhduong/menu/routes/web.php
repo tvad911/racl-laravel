@@ -38,5 +38,7 @@ use Illuminate\Support\Facades\Route;
 // });
 //
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::resource('menu','Anhduong\Menu\Http\Backend\MenusController');
+	Route::post('menu/updatemulti', ['as' => 'menu.updatemulti', 'uses' => 'Backend\MenusController@postUpdateMulti']);
+    Route::get('menu/export/{type}', ['as' => 'menu.export', 'uses' => 'Backend\MenusController@export'])->where('type', '[A-Za-z]+');
+    Route::resource('menu','Backend\MenusController');
 });
