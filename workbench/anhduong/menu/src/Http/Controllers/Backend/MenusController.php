@@ -152,8 +152,25 @@ class MenusController extends Controller
      */
     public function edit($id)
     {
-
         $item = $this->repository->find($id);
+
+        // $oldInputs = old();
+        // if ($oldInputs && $id == 0) {
+        //     $oldObject = new \stdClass();
+        //     foreach ($oldInputs as $key => $row) {
+        //         $oldObject->$key = $row;
+        //     }
+        //     $menu = $oldObject;
+        // } else {
+        //     $menu = $this->menuRepository->findById($id);
+        //     if (!$menu) {
+        //         $menu = $this->menuRepository->getModel();
+        //     }
+        // }
+
+        // $nestables = \Botble\Menu\Facades\Menu::generateMenu($menu->slug, 0);
+
+        // return view('menu::edit', compact('menu', nestables'));
 
         return view('menu::backends.menus.edit', compact('item'));
     }
@@ -279,34 +296,6 @@ class MenusController extends Controller
             'delete' => 'delete'
         ];
     }
-
-    // /**
-    //  * @param $id
-    //  */
-    // public function getEdit($id)
-    // {
-
-    //     $oldInputs = old();
-    //     if ($oldInputs && $id == 0) {
-    //         $oldObject = new \stdClass();
-    //         foreach ($oldInputs as $key => $row) {
-    //             $oldObject->$key = $row;
-    //         }
-    //         $menu = $oldObject;
-    //     } else {
-    //         $menu = $this->menuRepository->findById($id);
-    //         if (!$menu) {
-    //             $menu = $this->menuRepository->getModel();
-    //         }
-    //     }
-
-    //     $categories = \Botble\Menu\Facades\Menu::generateSelect('category', 0, 1);
-    //     $tags = \Botble\Menu\Facades\Menu::generateSelect('tag', 0, 1);
-    //     $pages = \Botble\Menu\Facades\Menu::generateSelect('page', 0, 1);
-    //     $nestables = \Botble\Menu\Facades\Menu::generateMenu($menu->slug, 0);
-
-    //     return view('menu::edit', compact('menu', 'categories', 'tags', 'pages', 'nestables'));
-    // }
 
     // /**
     //  * @param MenuRequest $request

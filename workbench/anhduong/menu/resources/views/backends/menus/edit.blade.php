@@ -23,7 +23,7 @@
             <div class="col-md-3">
                 <!-- general form elements -->
                 @if(isset($item) && $item->id)
-                <div class="box box-primary box-link-menus" data-type="custom-link">
+                <!-- <div class="box box-primary box-link-menus" data-type="custom-link">
                     <div class="box-header with-border">
                         <h3 class="box-title">
                             <i class="icon-layers font-dark"></i>
@@ -68,311 +68,69 @@
                             <i class="fa fa-plus"></i> Add
                         </button>
                     </div>
+                </div> -->
+                <div class="box box-primary box-link-menus" data-type="custom-link">
+                    <div class="widget panel">
+                        <div class="widget-heading">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseCustomLink" class="" aria-expanded="true">
+                                <h4 class="widget-title">
+                                    <i class="box_img_sale"></i>
+                                    <span>Add link</span>
+                                    <i class="fa narrow-icon fa-angle-up"></i>
+                                </h4>
+                            </a>
+                        </div>
+                        <div id="collapseCustomLink" class="panel-collapse collapse in" aria-expanded="true">
+                            <div class="widget-body">
+                                <div class="box-links-for-menu">
+                                    <div id="external_link" class="the-box">
+                                        <div class="node-content">
+                                            <div class="form-group">
+                                                <label for="node-title">Title</label>
+                                                <input type="text" required="required" class="form-control" id="node-title" autocomplete="false">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="node-url">URL</label>
+                                                <input type="text" required="required" class="form-control" id="node-url" placeholder="http://" autocomplete="false">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="node-icon">Icon</label>
+                                                <input type="text" required="required" class="form-control" id="node-icon" placeholder="fa fa-home" autocomplete="false">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="node-css">CSS class</label>
+                                                <input type="text" required="required" class="form-control" id="node-css" autocomplete="false">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="target">Target</label>
+                                                <select name="target" class="form-control select-full select2-hidden-accessible" id="target" tabindex="-1" aria-hidden="true">
+                                                    <option value="_self">Open link directly</option>
+                                                    <option value="_blank">Open link in new tab</option>
+                                                </select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 100%;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-target-container"><span class="select2-selection__rendered" id="select2-target-container" title="Open link directly">Open link directly</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                            </div>
+
+                                            <div class="text-right form-group node-actions hide">
+                                                <a class="btn red btn-remove" href="#">Remove</a>
+                                                <a class="btn blue btn-cancel" href="#">Cancel</a>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="text-right add-button">
+                                                    <div class="btn-group">
+                                                        <a href="#" class="btn-add-to-menu btn btn-primary"><span class="text"><i class="fa fa-plus"></i> Add to menu</span></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.box -->
                 @endif
-                <!-- general form elements -->
-                <div class="box box-primary box-link-menus" data-type="page">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">
-                            <i class="icon-layers font-dark"></i>
-                            Pages
-                        </h3>
-                        <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 170px;"><div class="scroller height-auto" style="max-height: 300px; overflow: hidden; width: auto; height: 170px;" data-rail-visible="1" data-initialized="1">
-                            <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="5" name="">
-                            <span></span>
-                            <span class="text">Videos</span>
-                        </label>
-
-                                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="4" name="">
-                            <span></span>
-                            <span class="text">Liên hệ</span>
-                        </label>
-
-                                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="3" name="">
-                            <span></span>
-                            <span class="text">Điều khoản</span>
-                        </label>
-
-                                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="2" name="">
-                            <span></span>
-                            <span class="text">Giới thiệu</span>
-                        </label>
-
-                                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="1" name="">
-                            <span></span>
-                            <span class="text">Trang chủ</span>
-                        </label>
-
-                                            </li>
-                            </ul>
-                        </div><div class="slimScrollBar" style="background: rgb(187, 187, 187); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 170px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
-                    </div>
-                    <div class="box-footer text-right">
-                        <button class="btn btn-primary add-item" type="submit">
-                            <i class="fa fa-plus"></i> Add
-                        </button>
-                    </div>
-                </div>
-                <!-- /.box -->
-                <!-- general form elements -->
-                <div class="box box-primary box-link-menus" data-type="category">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">
-                            <i class="icon-layers font-dark"></i>
-                            Categories
-                        </h3>
-                        <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 300px;"><div class="scroller height-auto" style="max-height: 300px; overflow: hidden; width: auto; height: 300px;" data-rail-visible="1" data-initialized="1">
-                            <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="2" name="">
-                            <span></span>
-                            <span class="text">Tư vấn nông nghiệp</span>
-                        </label>
-
-                                <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="13" name="">
-                            <span></span>
-                            <span class="text">Văn bản pháp quy</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="12" name="">
-                            <span></span>
-                            <span class="text">Trồng trọt</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="11" name="">
-                            <span></span>
-                            <span class="text">Chăn nuôi</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="1" name="">
-                            <span></span>
-                            <span class="text">Tin tức nông nghiệp</span>
-                        </label>
-
-                                <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="10" name="">
-                            <span></span>
-                            <span class="text">Sâu bệnh</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="9" name="">
-                            <span></span>
-                            <span class="text">Sự kiện</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="8" name="">
-                            <span></span>
-                            <span class="text">Thế giới</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="7" name="">
-                            <span></span>
-                            <span class="text">Việt Nam</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="3" name="">
-                            <span></span>
-                            <span class="text">Chuyện nhà nông</span>
-                        </label>
-
-                                <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="15" name="">
-                            <span></span>
-                            <span class="text">Nông thôn mới</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="14" name="">
-                            <span></span>
-                            <span class="text">Nông dân làm giàu</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="4" name="">
-                            <span></span>
-                            <span class="text">Vật tư nông nghiệp</span>
-                        </label>
-
-                                <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="18" name="">
-                            <span></span>
-                            <span class="text">Thuốc BVTV</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="17" name="">
-                            <span></span>
-                            <span class="text">Máy nông nghiệp</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="16" name="">
-                            <span></span>
-                            <span class="text">Cây giống, con giống</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="5" name="">
-                            <span></span>
-                            <span class="text">Giá cả thị trường</span>
-                        </label>
-
-                                <ul>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="21" name="">
-                            <span></span>
-                            <span class="text">Nông sản khác</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="20" name="">
-                            <span></span>
-                            <span class="text">Lúa gạo</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="19" name="">
-                            <span></span>
-                            <span class="text">Cà phê</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                            </ul>
-                            </li>
-                                    <li>
-                                <label class="mt-checkbox mt-checkbox-outline ">
-                            <input type="checkbox" value="6" name="">
-                            <span></span>
-                            <span class="text">Thời tiết nông vụ</span>
-                        </label>
-
-                                <ul>
-                            </ul>
-                            </li>
-                            </ul>
-                        </div><div class="slimScrollBar" style="background: rgb(187, 187, 187); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 126.05px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px; display: none;"></div></div>
-                    </div>
-                    <div class="box-footer text-right">
-                        <button class="btn btn-primary add-item" type="submit">
-                            <i class="fa fa-plus"></i> Add
-                        </button>
-                    </div>
-                </div>
-                <!-- /.box -->
             </div>
             <!--/.col (left) -->
             <!-- right column -->
@@ -407,6 +165,27 @@
                         </div>
                     </div>
                     <!-- /.box-body -->
+
+                    <!-- /.box-body -->
+                     <div class="box-body">
+                        <div class="form-group">
+                            <div class="widget">
+                                <div class="widget-title">
+                                    <h4>
+                                        <i class="fa fa-bars font-dark"></i>
+                                        <span>Menu structure</span>
+                                    </h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="dd nestable-menu" id="nestable" data-depth="0">
+                                        {!! $nestables or '' !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     {!! Form::hidden('id',$item->id) !!}
 
