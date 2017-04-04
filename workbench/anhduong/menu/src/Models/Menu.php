@@ -50,4 +50,11 @@ class Menu extends Model implements Transformable
      */
     protected $hidden = [];
 
+    /**
+     * @return mixed
+     */
+    public function menuNode()
+    {
+        return $this->hasMany('Anhduong\Menu\Models\MenuNode', 'menu_id');
+    }
 }

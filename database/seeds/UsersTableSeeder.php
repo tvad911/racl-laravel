@@ -26,7 +26,7 @@ class UsersTableSeeder extends Seeder
   //       DB::table('users')->insert($users);
 
         $faker = Faker::create();
-        foreach (range(1,100000) as $index) {
+        foreach (range(1,50) as $index) {
             DB::table('acl_users')->insert([
                     'username'   => $faker->name,
                     'name'       => $faker->name,

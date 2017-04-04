@@ -22,8 +22,18 @@ class MenuUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        $rules = array(
+            'title'  => 'required|min:3|max:255',
+            'slug'   => 'required|min:3|max:255|unique:menus,slug',
+            'status' => 'required|integer|in:0,1',
+        );
+
+        $input = Request::only('id');
+        if($input['id']) {
+            $rules['title'] .= ','. $input['id'] .',id';
+            $rules['slug']  .= ','. $input['id'] .',id';
+        }
+
+        return $rules;
     }
 }

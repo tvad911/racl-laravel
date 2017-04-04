@@ -74,7 +74,7 @@ class MenusController extends Controller
             ]);
         }
 
-        return view('vendor.menu.backends.menus.index', compact('items','total','params', 'options'));
+        return view('menu::backends.menus.index', compact('items','total','params', 'options'));
     }
 
     /**
@@ -84,7 +84,7 @@ class MenusController extends Controller
      */
     public function create()
     {
-        return view('vendor.menu.backends.menus.create');
+        return view('menu::backends.menus.create');
     }
 
     /**
@@ -139,7 +139,7 @@ class MenusController extends Controller
             ]);
         }
 
-        return view('vendor.menu.backends.menus.show', compact('item'));
+        return view('menu::backends.menus.show', compact('item'));
     }
 
 
@@ -155,7 +155,7 @@ class MenusController extends Controller
 
         $item = $this->repository->find($id);
 
-        return view('vendor.menu.backends.menus.edit', compact('item'));
+        return view('menu::backends.menus.edit', compact('item'));
     }
 
 
@@ -262,34 +262,6 @@ class MenusController extends Controller
     }
 
     /**
-     * Export data to csv type
-     * @return [type] [description]
-     */
-    public function export($type)
-    {
-        $options = $this->para;
-        $items = $this->repository->scopeQuery(function($query){
-                return $query->orderBy('id','desc');
-            })->all(array('id', 'username', 'email', 'name', 'created_at', 'updated_at', 'status'));
-
-        \Excel::create('Filename', function($excel) use($items) {
-
-            $excel->sheet('Sheetname', function($sheet) use($items) {
-
-                // Set auto size for sheet
-                $sheet->setAutoSize(true);
-
-                $sheet->cells('A1:G1', function($cells) {
-                    $cells->setBackground('#000000');
-                    $cells->setFontWeight('bold');
-                });
-                $sheet->fromArray($items, null, 'A1', true);
-            });
-
-        })->export($type);
-    }
-
-    /**
      * Get the map of resource methods to ability names.
      *
      * @return array
@@ -307,4 +279,168 @@ class MenusController extends Controller
             'delete' => 'delete'
         ];
     }
+
+    // /**
+    //  * @param $id
+    //  */
+    // public function getEdit($id)
+    // {
+
+    //     $oldInputs = old();
+    //     if ($oldInputs && $id == 0) {
+    //         $oldObject = new \stdClass();
+    //         foreach ($oldInputs as $key => $row) {
+    //             $oldObject->$key = $row;
+    //         }
+    //         $menu = $oldObject;
+    //     } else {
+    //         $menu = $this->menuRepository->findById($id);
+    //         if (!$menu) {
+    //             $menu = $this->menuRepository->getModel();
+    //         }
+    //     }
+
+    //     $categories = \Botble\Menu\Facades\Menu::generateSelect('category', 0, 1);
+    //     $tags = \Botble\Menu\Facades\Menu::generateSelect('tag', 0, 1);
+    //     $pages = \Botble\Menu\Facades\Menu::generateSelect('page', 0, 1);
+    //     $nestables = \Botble\Menu\Facades\Menu::generateMenu($menu->slug, 0);
+
+    //     return view('menu::edit', compact('menu', 'categories', 'tags', 'pages', 'nestables'));
+    // }
+
+    // /**
+    //  * @param MenuRequest $request
+    //  * @param Menu $object
+    //  * @param MenuContent $objectContent
+    //  * @param MenuNode $objectNode
+    //  * @param $id
+    //  */
+    // public function postEdit(MenuRequest $request, Menu $object, MenuContent $objectContent, MenuNode $objectNode, $id)
+    // {
+    //     $menu = $object->findOrNew($id);
+
+    //     $menu->name = $request->name;
+    //     $menu->save();
+
+    //     $menuContent = $objectContent->where(['menu_id' => $menu->id])->first();
+    //     if (!$menuContent) {
+    //         $menuContent = new MenuContent;
+    //         $menuContent->menu_id = $menu->id;
+    //         $menuContent->save();
+    //     }
+
+    //     $menuNodesJson = json_decode($request->get('menu_nodes', null));
+
+    //     /*Deleted nodes*/
+    //     $deletedNodes = explode(' ', ltrim($request->get('deleted_nodes', '')));
+    //     $objectNode->whereIn('id', $deletedNodes)->delete();
+    //     $this->_recursiveSaveMenu($menuNodesJson, $menuContent->id, 0);
+    //     event(new AuditHandlerEvent('Menu', 'updated', $id));
+
+    //     return redirect()->route('menus.edit', $id)->with('success_msg', trans('notices.update_success_message'));
+    // }
+
+    // /**
+    //  * @param $id
+    //  */
+    // public function getDelete($id)
+    // {
+    //     $response = $this->menuRepository->delete($id);
+    //     event(new AuditHandlerEvent('Menu', 'deleted', $id));
+
+    //     return response()->json($response, $response['response_code']);
+    // }
+
+    // /**
+    //  * @param Request $request
+    //  */
+    // public function postDeleteMany(Request $request)
+    // {
+    //     $ids = $request->input('ids');
+    //     if (empty($ids)) {
+    //         return response()->json(['error' => true, 'message' => trans('menu.notices.no_select')]);
+    //     }
+
+    //     foreach ($ids as $id) {
+    //         $response = $this->menuRepository->delete($id);
+    //         event(new AuditHandlerEvent('Menu', 'deleted', $id));
+    //     }
+
+    //     return response()->json($response, $response['response_code']);
+    // }
+
+    // /**
+    //  * @param Request $request
+    //  */
+    // public function postChangeStatus(Request $request)
+    // {
+    //     $ids = $request->input('ids');
+    //     if (empty($ids)) {
+    //         return response()->json(['error' => true, 'message' => trans('menu.notices.no_select')]);
+    //     }
+
+    //     foreach ($ids as $id) {
+    //         $menu = $this->menuRepository->findById($id);
+    //         $menu->status = $request->input('status');
+    //         $menu = $this->menuRepository->createOrUpdate($menu);
+    //         event(new AuditHandlerEvent('Menu', 'updated', $id));
+    //     }
+
+    //     return response()->json(['error' => false, 'message' => trans('menu.notices.update_success_message')]);
+    // }
+
+    // /**
+    //  * @param $json_item
+    //  * @param $menu_content_id
+    //  * @param $parent_id
+    //  * @return mixed
+    //  */
+    // private function _saveMenuNode($json_item, $menu_content_id, $parent_id)
+    // {
+    //     if (isset($json_item->id)) {
+    //         $item = MenuNode::find($json_item->id);
+    //     }
+    //     if (!$item) {
+    //         $item = new MenuNode();
+    //     }
+
+    //     $item->title = (isset($json_item->title)) ? $json_item->title : '';
+    //     $item->url = (isset($json_item->customurl)) ? $json_item->customurl : '';
+    //     $item->css_class = (isset($json_item->class)) ? $json_item->class : '';
+    //     $item->position = (isset($json_item->position)) ? $json_item->position : '';
+    //     $item->icon_font = (isset($json_item->iconfont)) ? $json_item->iconfont : '';
+    //     $item->type = (isset($json_item->type)) ? $json_item->type : '';
+    //     $item->menu_content_id = $menu_content_id;
+    //     $item->parent_id = $parent_id;
+
+    //     switch ($json_item->type) {
+    //         case 'custom-link':
+    //             $item->related_id = 0;
+    //             break;
+    //         default:
+    //             $item->related_id = (int) $json_item->relatedid;
+    //             break;
+    //     }
+
+    //     $item->save();
+
+    //     return $item->id;
+    // }
+
+    // /**
+    //  * @param $json_arr
+    //  * @param $menu_content_id
+    //  * @param $parent_id
+    //  */
+    // private function _recursiveSaveMenu($json_arr, $menu_content_id, $parent_id)
+    // {
+    //     foreach ((array) $json_arr as $key => $row) {
+    //         $parent = $this->_saveMenuNode($row, $menu_content_id, $parent_id);
+    //         if ($parent != null) {
+    //             if (!empty($row->children)) {
+    //                 $this->_recursiveSaveMenu($row->children, $menu_content_id, $parent);
+    //             }
+    //         }
+    //     }
+    // }
 }

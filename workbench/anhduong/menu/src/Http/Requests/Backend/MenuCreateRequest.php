@@ -22,8 +22,12 @@ class MenuCreateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        $rules = array(
+            'title'  => 'required|min:3|max:255',
+            'slug'   => 'required|min:3|max:255|unique:menus,slug',
+            'status' => 'required|integer|in:0,1',
+        );
+
+        return $rules;
     }
 }

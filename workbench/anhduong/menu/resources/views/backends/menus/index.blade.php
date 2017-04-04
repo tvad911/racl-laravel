@@ -20,9 +20,6 @@
                         <h3 class="box-title"><i class="fa fa-list" aria-hidden="true"></i> {{ trans('messages.list', ['name' => trans('backend.menu')]) }}</h3>
 
                         <div class="pull-right">
-                            <a href="{!! route('admin.menu.export', array('type' => 'csv')) !!}"><button id="button-shipping" class="btn btn-info" title="Export to CSV"><i class="fa fa-file-text"></i></button></a>
-                            <a href="{!! route('admin.menu.export', array('type' => 'pdf')) !!}"><button id="button-invoice" class="btn btn-info" title="Export to Pdf"><i class="fa fa-print"></i></a>
-                            </button>
                             <a title="Create User" href="{{ route('admin.menu.create') }}"
                                class="btn btn-primary"><i class="fa fa-plus"></i></a>
                         </div>
