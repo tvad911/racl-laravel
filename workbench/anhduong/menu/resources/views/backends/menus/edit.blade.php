@@ -23,7 +23,7 @@
             <div class="col-md-3">
                 <!-- general form elements -->
                 @if(isset($item) && $item->id)
-                <!-- <div class="box box-primary box-link-menus" data-type="custom-link">
+                <div class="box box-primary box-link-menus" data-type="custom-link">
                     <div class="box-header with-border">
                         <h3 class="box-title">
                             <i class="icon-layers font-dark"></i>
@@ -68,7 +68,7 @@
                             <i class="fa fa-plus"></i> Add
                         </button>
                     </div>
-                </div> -->
+                </div>
                 <div class="box box-primary box-link-menus" data-type="custom-link">
                     <div class="widget panel">
                         <div class="widget-heading">

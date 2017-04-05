@@ -13,6 +13,12 @@ return [
     |
     */
 
-    'name'   => 'Tên của Role',
-    'filter' => 'Lọc theo',
+    'title'           => 'Tên của Role',
+    'slug'            => 'Url Rewrite',
+    'status'          => 'Trạng thái',
+    'cannot_delete'   => 'Không thể xóa',
+    'article_deleted' => 'Đã xóa thành công',
+    'notices'         => [
+        'no_select' => 'Không có menu nào được select',
+    ],
 ];

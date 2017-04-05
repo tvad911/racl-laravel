@@ -101,11 +101,11 @@ class MenuNode extends Model implements Transformable
     public function getRelated($theme = false)
     {
         $item = new \stdClass;
-        $item->name = null;
+        $item->title = null;
         $item->url = null;
         switch ($this->type) {
             default:
-                $item->name = $this->title;
+                $item->title = $this->title;
                 $item->url = url($this->url);
                 break;
         }

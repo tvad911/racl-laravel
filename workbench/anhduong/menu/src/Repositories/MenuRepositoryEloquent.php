@@ -251,4 +251,77 @@ class MenuRepositoryEloquent extends BaseRepository implements MenuRepository
             $this->update($params, $value);
         }
     }
+
+    /**
+     * @param $slug
+     * @param $active
+     * @return mixed
+     */
+    public function findBySlug($slug, $active, $selects)
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $menu = $this->model->withTrashed()->where('slug', $slug)->get();
+
+        if ($active) {
+            $menu = $menu->where('status', 1);
+        }
+
+        $this->resetModel();
+
+        return $this->parserResult($menu->select($selects)->first());
+    }
+
+    /**
+     * @param $id
+     * @return arrayDelete a entity in repository by id.
+     */
+    public function delete($id)
+    {
+        try {
+            $menu = $this->find($id);
+
+            $menu->delete();
+
+            $related = MenuNode::where('menu_id', '=', $id)->lists('id')->toArray();
+
+            MenuNode::where('menu_id', '=', $id)->delete();
+
+            MenuNode::whereIn('menu_id', $related)->delete();
+
+        } catch (Exception $e) {
+            return ['error' => true, 'message' => trans('menu.cannot_delete'), 'response_code' => 500];
+        }
+
+        return ['error' => false, 'message' => trans('menu.article_deleted'), 'response_code' => 200];
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function createSlug($name)
+    {
+        $slug = Str::slug($name);
+        $index = 1;
+        $baseSlug = $slug;
+        while ($this->model->where('slug', $slug)->count() > 0) {
+            $slug = $baseSlug . '-' . $index++;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * @param $menu_content_id
+     * @param $parent_id
+     * @param null $selects
+     * @return array|\Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getMenuNodes($menu_id, $parent_id, $selects = null)
+    {
+        return MenuNode::where(['menu_id' => $menu_id, 'parent_id' => $parent_id])
+            ->select($selects)
+            ->orderBy('sort_order', 'asc')->get();
+    }
 }

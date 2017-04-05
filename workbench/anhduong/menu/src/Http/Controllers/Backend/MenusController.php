@@ -154,25 +154,9 @@ class MenusController extends Controller
     {
         $item = $this->repository->find($id);
 
-        // $oldInputs = old();
-        // if ($oldInputs && $id == 0) {
-        //     $oldObject = new \stdClass();
-        //     foreach ($oldInputs as $key => $row) {
-        //         $oldObject->$key = $row;
-        //     }
-        //     $menu = $oldObject;
-        // } else {
-        //     $menu = $this->menuRepository->findById($id);
-        //     if (!$menu) {
-        //         $menu = $this->menuRepository->getModel();
-        //     }
-        // }
+        $nestables = \Anhduong\Menu\Facades\Menu::generateMenu($item->slug, 0);
 
-        // $nestables = \Botble\Menu\Facades\Menu::generateMenu($menu->slug, 0);
-
-        // return view('menu::edit', compact('menu', nestables'));
-
-        return view('menu::backends.menus.edit', compact('item'));
+        return view('menu::backends.menus.edit', compact('item', 'nestables'));
     }
 
 
@@ -184,7 +168,7 @@ class MenusController extends Controller
      *
      * @return Response
      */
-    public function update(MenuUpdateRequest $request, $id)
+    public function update(MenuUpdateRequest $request, Menu $object, MenuNode $objectNode,$id)
     {
 
         try {
@@ -216,6 +200,28 @@ class MenusController extends Controller
 
             return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
+
+        $menu = $object->findOrNew($id);
+
+        $menu->title = $request->title;
+        $menu->save();
+
+        $menuContent = $objectContent->where(['menu_id' => $menu->id])->first();
+        if (!$menuContent) {
+            $menuContent = new MenuContent;
+            $menuContent->menu_id = $menu->id;
+            $menuContent->save();
+        }
+
+        $menuNodesJson = json_decode($request->get('menu_nodes', null));
+
+        /*Deleted nodes*/
+        $deletedNodes = explode(' ', ltrim($request->get('deleted_nodes', '')));
+        $objectNode->whereIn('id', $deletedNodes)->delete();
+        $this->_recursiveSaveMenu($menuNodesJson, $menuContent->id, 0);
+        event(new AuditHandlerEvent('Menu', 'updated', $id));
+
+        return redirect()->route('menus.edit', $id)->with('success_msg', trans('notices.update_success_message'));
     }
 
 
@@ -297,139 +303,88 @@ class MenusController extends Controller
         ];
     }
 
-    // /**
-    //  * @param MenuRequest $request
-    //  * @param Menu $object
-    //  * @param MenuContent $objectContent
-    //  * @param MenuNode $objectNode
-    //  * @param $id
-    //  */
-    // public function postEdit(MenuRequest $request, Menu $object, MenuContent $objectContent, MenuNode $objectNode, $id)
-    // {
-    //     $menu = $object->findOrNew($id);
+    /**
+     * @param $id
+     */
+    public function getDelete($id)
+    {
+        $response = $this->repository->delete($id);
+        event(new AuditHandlerEvent('Menu', 'deleted', $id));
 
-    //     $menu->name = $request->name;
-    //     $menu->save();
+        return response()->json($response, $response['response_code']);
+    }
 
-    //     $menuContent = $objectContent->where(['menu_id' => $menu->id])->first();
-    //     if (!$menuContent) {
-    //         $menuContent = new MenuContent;
-    //         $menuContent->menu_id = $menu->id;
-    //         $menuContent->save();
-    //     }
+    /**
+     * @param Request $request
+     */
+    public function postDeleteMany(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (empty($ids)) {
+            return response()->json(['error' => true, 'message' => trans('menu.notices.no_select')]);
+        }
 
-    //     $menuNodesJson = json_decode($request->get('menu_nodes', null));
+        foreach ($ids as $id) {
+            $response = $this->menuRepository->delete($id);
+            event(new AuditHandlerEvent('Menu', 'deleted', $id));
+        }
 
-    //     /*Deleted nodes*/
-    //     $deletedNodes = explode(' ', ltrim($request->get('deleted_nodes', '')));
-    //     $objectNode->whereIn('id', $deletedNodes)->delete();
-    //     $this->_recursiveSaveMenu($menuNodesJson, $menuContent->id, 0);
-    //     event(new AuditHandlerEvent('Menu', 'updated', $id));
+        return response()->json($response, $response['response_code']);
+    }
 
-    //     return redirect()->route('menus.edit', $id)->with('success_msg', trans('notices.update_success_message'));
-    // }
 
-    // /**
-    //  * @param $id
-    //  */
-    // public function getDelete($id)
-    // {
-    //     $response = $this->menuRepository->delete($id);
-    //     event(new AuditHandlerEvent('Menu', 'deleted', $id));
+    /**
+     * @param $json_item
+     * @param $menu_content_id
+     * @param $parent_id
+     * @return mixed
+     */
+    private function _saveMenuNode($json_item, $menu_id, $parent_id)
+    {
+        if (isset($json_item->id)) {
+            $item = MenuNode::find($json_item->id);
+        }
+        if (!$item) {
+            $item = new MenuNode();
+        }
 
-    //     return response()->json($response, $response['response_code']);
-    // }
+        $item->title = (isset($json_item->title)) ? $json_item->title : '';
+        $item->url = (isset($json_item->customurl)) ? $json_item->customurl : '';
+        $item->css_class = (isset($json_item->class)) ? $json_item->class : '';
+        $item->sort_order = (isset($json_item->sort_order)) ? $json_item->sort_order : '';
+        $item->icon_font = (isset($json_item->iconfont)) ? $json_item->iconfont : '';
+        $item->type = (isset($json_item->type)) ? $json_item->type : '';
+        $item->menu_id = $menu_id;
+        $item->parent_id = $parent_id;
 
-    // /**
-    //  * @param Request $request
-    //  */
-    // public function postDeleteMany(Request $request)
-    // {
-    //     $ids = $request->input('ids');
-    //     if (empty($ids)) {
-    //         return response()->json(['error' => true, 'message' => trans('menu.notices.no_select')]);
-    //     }
+        switch ($json_item->type) {
+            case 'custom-link':
+                $item->related_id = 0;
+                break;
+            default:
+                $item->related_id = (int) $json_item->relatedid;
+                break;
+        }
 
-    //     foreach ($ids as $id) {
-    //         $response = $this->menuRepository->delete($id);
-    //         event(new AuditHandlerEvent('Menu', 'deleted', $id));
-    //     }
+        $item->save();
 
-    //     return response()->json($response, $response['response_code']);
-    // }
+        return $item->id;
+    }
 
-    // /**
-    //  * @param Request $request
-    //  */
-    // public function postChangeStatus(Request $request)
-    // {
-    //     $ids = $request->input('ids');
-    //     if (empty($ids)) {
-    //         return response()->json(['error' => true, 'message' => trans('menu.notices.no_select')]);
-    //     }
-
-    //     foreach ($ids as $id) {
-    //         $menu = $this->menuRepository->findById($id);
-    //         $menu->status = $request->input('status');
-    //         $menu = $this->menuRepository->createOrUpdate($menu);
-    //         event(new AuditHandlerEvent('Menu', 'updated', $id));
-    //     }
-
-    //     return response()->json(['error' => false, 'message' => trans('menu.notices.update_success_message')]);
-    // }
-
-    // /**
-    //  * @param $json_item
-    //  * @param $menu_content_id
-    //  * @param $parent_id
-    //  * @return mixed
-    //  */
-    // private function _saveMenuNode($json_item, $menu_content_id, $parent_id)
-    // {
-    //     if (isset($json_item->id)) {
-    //         $item = MenuNode::find($json_item->id);
-    //     }
-    //     if (!$item) {
-    //         $item = new MenuNode();
-    //     }
-
-    //     $item->title = (isset($json_item->title)) ? $json_item->title : '';
-    //     $item->url = (isset($json_item->customurl)) ? $json_item->customurl : '';
-    //     $item->css_class = (isset($json_item->class)) ? $json_item->class : '';
-    //     $item->position = (isset($json_item->position)) ? $json_item->position : '';
-    //     $item->icon_font = (isset($json_item->iconfont)) ? $json_item->iconfont : '';
-    //     $item->type = (isset($json_item->type)) ? $json_item->type : '';
-    //     $item->menu_content_id = $menu_content_id;
-    //     $item->parent_id = $parent_id;
-
-    //     switch ($json_item->type) {
-    //         case 'custom-link':
-    //             $item->related_id = 0;
-    //             break;
-    //         default:
-    //             $item->related_id = (int) $json_item->relatedid;
-    //             break;
-    //     }
-
-    //     $item->save();
-
-    //     return $item->id;
-    // }
-
-    // /**
-    //  * @param $json_arr
-    //  * @param $menu_content_id
-    //  * @param $parent_id
-    //  */
-    // private function _recursiveSaveMenu($json_arr, $menu_content_id, $parent_id)
-    // {
-    //     foreach ((array) $json_arr as $key => $row) {
-    //         $parent = $this->_saveMenuNode($row, $menu_content_id, $parent_id);
-    //         if ($parent != null) {
-    //             if (!empty($row->children)) {
-    //                 $this->_recursiveSaveMenu($row->children, $menu_content_id, $parent);
-    //             }
-    //         }
-    //     }
-    // }
+    /**
+     * @param $json_arr
+     * @param $menu_id
+     * @param $parent_id
+     */
+    private function _recursiveSaveMenu($json_arr, $menu_id, $parent_id)
+    {
+        foreach ((array) $json_arr as $key => $row) {
+            $parent = $this->_saveMenuNode($row, $menu_id, $parent_id);
+            if ($parent != null) {
+                if (!empty($row->children)) {
+                    $this->_recursiveSaveMenu($row->children, $menu_id, $parent);
+                }
+            }
+        }
+    }
 }

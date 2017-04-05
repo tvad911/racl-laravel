@@ -95,7 +95,7 @@ class MenuServiceProvider extends ServiceProvider {
     {
         $this->app->singleton('menu', function($app)
         {
-            return new Menu;
+            return new Menu();
         });
 
         $this->app->register('Anhduong\Menu\Providers\RouteServiceProvider');
