@@ -9,31 +9,80 @@
 
 ## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+Đây là một project được xây dựng để phân quyền user trong laravel. 
+Phân quyền chia thành: Permission, Role, Group, User. Theo RACL, là cái khó nhất trong phân quyền, theo như lý thuyết hay suy nghĩ thì thư viện mình đang xài có điểm hơi khác. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Các thư viện được sử dụng trong project:
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+- [Laravel Repository](https://github.com/andersao/l5-repository).
+Thư viện này hỗ trợ các bạn tạo các module nhanh chóng, nhưng mình cảm nhận là quá phức tạp, 
+phân chia code ra rất nhiều, thực sự thì làm cho tốn rất nhiều sức. Về lý thuyết có thể giúp giảm thiểu quá trình sau này bảo trì code.
 
-## Learning Laravel
+Hiện mình đã viết tạo các module sử dụng thư viện này ok, nhưng vẫn còn một vài lỗi về việc search, uupdate multi, các bạn có thể dành thời gian sửa lại, viết thêm filter multi cho nó.
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+- [RACL] (https://github.com/signes-pl/laravel-acl)
+Thư viện này, mình tìm thấy năm 2015, thấy thích muốn viết nhưng chỉ viết vào năm 2016, nhưng cả mấy tháng mới xem một lần. Giờ thì mình không còn đụng vào nữa, thực tế đôi khi không cần điều gì phức tạp.
+Sang tới 2017 mình mới xem lại và viết tới phần tạo giao diện, thêm các Permission, Role, Group rồi tiến hành áp vào Policy để test và thấy hoạt động.
+Vậy phần việc còn lại của các bạn là: kiểm tra xem có lỗi gì, áp dụng phần permission sau khi trả về, kết hợp với policy và midleware + authen trong request để check phân quyền tới từng dòng code hay modulle.
+Về phần policy xem tại: # https://laravel.com/docs/5.5/authorization
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+Một số lưu ý nhỏ: Nếu dùng, trong controller: 
+$this->authorize('index', $group);
 
-## Contributing
+Thì trong Policy: 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+class GroupPolicy
+{
+    use HandlesAuthorization;
+    protected $resource = 'admin.group';
 
-## Security Vulnerabilities
+    /**
+     * Determine whether the user can view the group.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Group  $group
+     * @return mixed
+     */
+    public function index(User $user, Group $group)
+    {
+        $resource = $this->resource. '|index';
+        if(\Acl::isAllow($resource, $user))
+        {
+            return true;
+        }
+    }
+}
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+Bạn phải map các method trong Policy và method trong Controller:
+/**
+ * Get the map of resource methods to ability names.
+ *
+ * @return array
+ */
+protected function resourceAbilityMap()
+{
+	return [
+		'index' => 'index',
+		'create' => 'create',
+		'store' => 'store',
+		'show' => 'show',
+		'edit' => 'edit',
+		'update' => 'update',
+		'destroy' => 'destroy',
+		'delete' => 'delete'
+	];
+}
+
+Thì nó mới biết đâu là action cần kiểm tra.
+
+## Liên hệ:
+Skype: tvad911
+Facebook: anhduongphuong
+
+## Lời ngỏ
+Mình chưa có cái project nào gọi là làm cho khách hàng thực tế cả, nhưng đây là cái mình đã viết, có thể không đúng chuẩn.
+Thiếu việc test hay các phần khác, nhưng hi vọng, nếu ai đó xem và thích project này,
+Có thể biến nó thành một base cms hoặc ứng dụng viết lại một cms trên vuejs2 chẳng hạn, để chia sẻ với mọi người.
 
 ## License
 
