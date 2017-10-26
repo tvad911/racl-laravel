@@ -48,7 +48,7 @@ class GroupsController extends Controller
     public function index()
     {
         $group = new \App\Models\Acl\Group();
-        $this->authorize('index', $group);
+        // $this->authorize('index', $group);
         // dd(\Auth::user()->getPermissions);
         $options = $this->para;
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
